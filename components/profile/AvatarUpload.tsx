@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { hasSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/client";
 
@@ -14,12 +14,19 @@ type AvatarUploadProps = {
 export function AvatarUpload({ userId, initialUrl, onUploaded }: AvatarUploadProps) {
   const [avatarUrl, setAvatarUrl] = useState(initialUrl ?? "");
   const [uploading, setUploading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAvatarUrl(initialUrl ?? "");
+  }, [initialUrl]);
 
   async function upload(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file || !userId) return;
+    setErrorMessage(null);
+
     if (!hasSupabaseConfig()) {
-      window.alert("Add your Supabase keys before uploading avatars.");
+      setErrorMessage("Add your Supabase keys before uploading avatars.");
       return;
     }
 
@@ -33,12 +40,19 @@ export function AvatarUpload({ userId, initialUrl, onUploaded }: AvatarUploadPro
       upsert: true
     });
 
-    if (!error) {
-      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-      setAvatarUrl(data.publicUrl);
-      onUploaded(data.publicUrl);
+    if (error) {
+      setErrorMessage(
+        error.message.includes("DatabaseSchemaMismatch")
+          ? "Supabase Storage is not ready. Enable Storage and create the avatars bucket."
+          : error.message
+      );
+      setUploading(false);
+      return;
     }
 
+    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+    setAvatarUrl(data.publicUrl);
+    onUploaded(data.publicUrl);
     setUploading(false);
   }
 
@@ -53,6 +67,9 @@ export function AvatarUpload({ userId, initialUrl, onUploaded }: AvatarUploadPro
         {uploading ? "uploading" : "change photo"}
         <input type="file" accept="image/*" className="sr-only" onChange={upload} />
       </label>
+      {errorMessage ? (
+        <p className="mt-3 max-w-xs font-mono text-xs leading-5 text-gray-600">{errorMessage}</p>
+      ) : null}
     </div>
   );
 }
