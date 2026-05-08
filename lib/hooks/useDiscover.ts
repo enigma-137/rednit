@@ -6,10 +6,24 @@ import { createClient } from "@/lib/supabase/client";
 import { mockProfiles } from "@/lib/mock-data";
 import type { Profile } from "@/lib/types";
 
+const BATCH_SIZE = 100;
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export function useDiscover() {
   const [profiles, setProfiles] = useState<Profile[]>(hasSupabaseConfig() ? [] : mockProfiles);
+  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(hasSupabaseConfig());
+  const [offset, setOffset] = useState(0);
+  const [likedIds, setLikedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!hasSupabaseConfig()) return;
@@ -32,22 +46,26 @@ export function useDiscover() {
         .select("to_user_id")
         .eq("from_user_id", user.id);
 
-      const likedIds = likedRows?.map((row) => row.to_user_id) ?? [];
+      const likedIdsList = likedRows?.map((row) => row.to_user_id) ?? [];
+      setLikedIds(likedIdsList);
 
       let query = supabase
         .from("profiles")
         .select("*")
         .neq("id", user.id)
         .order("created_at", { ascending: false })
-        .limit(24);
+        .limit(BATCH_SIZE);
 
-      if (likedIds.length) {
-        query = query.not("id", "in", `(${likedIds.join(",")})`);
+      if (likedIdsList.length) {
+        query = query.not("id", "in", `(${likedIdsList.join(",")})`);
       }
 
       const { data } = await query;
+      const shuffled = shuffleArray(data ?? []);
 
-      setProfiles(data ?? []);
+      setAllProfiles(shuffled);
+      setProfiles(shuffled.slice(0, 24));
+      setOffset(0);
       setLoading(false);
     }
 
@@ -81,5 +99,31 @@ export function useDiscover() {
     setProfiles((items) => items.filter((item) => item.id !== profile.id));
   }
 
-  return { profiles, loading, like, pass };
+  async function loadMore() {
+    if (!currentUserId || !hasSupabaseConfig()) return;
+
+    const supabase = createClient();
+    const newOffset = offset + BATCH_SIZE;
+
+    let query = supabase
+      .from("profiles")
+      .select("*")
+      .neq("id", currentUserId)
+      .order("created_at", { ascending: false })
+      .range(newOffset, newOffset + BATCH_SIZE - 1);
+
+    if (likedIds.length) {
+      query = query.not("id", "in", `(${likedIds.join(",")})`);
+    }
+
+    const { data } = await query;
+    if (data && data.length > 0) {
+      const shuffled = shuffleArray(data);
+      setAllProfiles((prev) => [...prev, ...shuffled]);
+      setProfiles((prev) => [...prev, ...shuffled.slice(0, 24)]);
+      setOffset(newOffset);
+    }
+  }
+
+  return { profiles, loading, like, pass, loadMore };
 }
