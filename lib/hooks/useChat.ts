@@ -6,6 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import { mockMessages, mockProfiles } from "@/lib/mock-data";
 import type { Message, Profile } from "@/lib/types";
 
+const uuidPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 export function useChat(matchId: string) {
   const [messages, setMessages] = useState<Message[]>(hasSupabaseConfig() ? [] : mockMessages);
   const [userId, setUserId] = useState("me");
@@ -16,6 +19,10 @@ export function useChat(matchId: string) {
 
   useEffect(() => {
     if (!hasSupabaseConfig()) return;
+    if (!uuidPattern.test(matchId)) {
+      setLoading(false);
+      return;
+    }
 
     const supabase = createClient();
 
@@ -97,7 +104,7 @@ export function useChat(matchId: string) {
 
     setMessages((items) => [...items, optimistic]);
 
-    if (matchId === "demo" || !hasSupabaseConfig()) return;
+    if (!hasSupabaseConfig() || !uuidPattern.test(matchId)) return;
 
     const supabase = createClient();
     const { data } = await supabase
