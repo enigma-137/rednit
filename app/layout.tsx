@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, IBM_Plex_Mono } from "next/font/google";
-// import "./globals.css";
+// @ts-ignore: side-effect import for global styles
+import "./globals.css";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
