@@ -3,12 +3,16 @@
 import { useEffect, useState } from "react";
 import { hasSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/client";
-import { mockMessages } from "@/lib/mock-data";
-import type { Message } from "@/lib/types";
+import { mockMessages, mockProfiles } from "@/lib/mock-data";
+import type { Message, Profile } from "@/lib/types";
 
 export function useChat(matchId: string) {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>(hasSupabaseConfig() ? [] : mockMessages);
   const [userId, setUserId] = useState("me");
+  const [otherProfile, setOtherProfile] = useState<Profile | null>(
+    hasSupabaseConfig() ? null : mockProfiles[0]
+  );
+  const [loading, setLoading] = useState(hasSupabaseConfig());
 
   useEffect(() => {
     if (!hasSupabaseConfig()) return;
@@ -19,9 +23,29 @@ export function useChat(matchId: string) {
       const {
         data: { user }
       } = await supabase.auth.getUser();
-      if (user) setUserId(user.id);
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-      if (matchId === "demo") return;
+      setUserId(user.id);
+
+      const { data: match } = await supabase
+        .from("matches")
+        .select("*")
+        .eq("id", matchId)
+        .maybeSingle();
+
+      if (match) {
+        const otherUserId = match.user_a_id === user.id ? match.user_b_id : match.user_a_id;
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", otherUserId)
+          .maybeSingle();
+
+        setOtherProfile(profile ?? null);
+      }
 
       const { data } = await supabase
         .from("messages")
@@ -30,6 +54,7 @@ export function useChat(matchId: string) {
         .order("created_at", { ascending: true });
 
       if (data) setMessages(data);
+      setLoading(false);
     }
 
     void loadMessages();
@@ -45,7 +70,10 @@ export function useChat(matchId: string) {
           filter: `match_id=eq.${matchId}`
         },
         (payload) => {
-          setMessages((items) => [...items, payload.new as Message]);
+          const incoming = payload.new as Message;
+          setMessages((items) =>
+            items.some((item) => item.id === incoming.id) ? items : [...items, incoming]
+          );
         }
       )
       .subscribe();
@@ -72,12 +100,26 @@ export function useChat(matchId: string) {
     if (matchId === "demo" || !hasSupabaseConfig()) return;
 
     const supabase = createClient();
-    await supabase.from("messages").insert({
-      match_id: matchId,
-      sender_id: userId,
-      content: trimmed
-    });
+    const { data } = await supabase
+      .from("messages")
+      .insert({
+        match_id: matchId,
+        sender_id: userId,
+        content: trimmed
+      })
+      .select()
+      .single();
+
+    if (data) {
+      setMessages((items) => {
+        const withoutOptimistic = items.filter((item) => item.id !== optimistic.id);
+
+        return withoutOptimistic.some((item) => item.id === data.id)
+          ? withoutOptimistic
+          : [...withoutOptimistic, data];
+      });
+    }
   }
 
-  return { messages, send, userId };
+  return { messages, send, userId, otherProfile, loading };
 }

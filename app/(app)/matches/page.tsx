@@ -1,8 +1,66 @@
 import Image from "next/image";
 import Link from "next/link";
+import { hasSupabaseConfig } from "@/lib/env";
 import { mockMatches } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase/server";
+import type { Match, Message, Profile } from "@/lib/types";
 
-export default function MatchesPage() {
+async function getMatches() {
+  if (!hasSupabaseConfig()) return mockMatches;
+
+  const supabase = createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data: matches } = await supabase
+    .from("matches")
+    .select("*")
+    .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
+    .order("created_at", { ascending: false });
+
+  if (!matches?.length) return [];
+
+  const otherUserIds = matches.map((match) =>
+    match.user_a_id === user.id ? match.user_b_id : match.user_a_id
+  );
+  const matchIds = matches.map((match) => match.id);
+
+  const [{ data: profiles }, { data: messages }] = await Promise.all([
+    supabase.from("profiles").select("*").in("id", otherUserIds),
+    supabase
+      .from("messages")
+      .select("*")
+      .in("match_id", matchIds)
+      .order("created_at", { ascending: false })
+      .limit(100)
+  ]);
+
+  const profilesById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
+  const latestMessageByMatchId = new Map<string, Message>();
+
+  for (const message of messages ?? []) {
+    if (!latestMessageByMatchId.has(message.match_id)) {
+      latestMessageByMatchId.set(message.match_id, message);
+    }
+  }
+
+  return matches.map((match): Match => {
+    const otherUserId = match.user_a_id === user.id ? match.user_b_id : match.user_a_id;
+
+    return {
+      ...match,
+      other_profile: profilesById.get(otherUserId) as Profile | undefined,
+      last_message: latestMessageByMatchId.get(match.id) ?? null
+    };
+  });
+}
+
+export default async function MatchesPage() {
+  const matches = await getMatches();
+
   return (
     <section className="mx-auto min-h-screen max-w-2xl px-5 py-8">
       <header className="border-b border-black pb-6">
@@ -10,8 +68,8 @@ export default function MatchesPage() {
       </header>
 
       <div className="divide-y divide-gray-200">
-        {mockMatches.length ? (
-          mockMatches.map((match, index) => {
+        {matches.length ? (
+          matches.map((match, index) => {
             const profile = match.other_profile;
             if (!profile) return null;
 
@@ -35,7 +93,9 @@ export default function MatchesPage() {
                 <div className="min-w-0">
                   <div className="flex items-baseline gap-2">
                     <p className="truncate font-bold">{profile.full_name ?? profile.username}</p>
-                    <p className="shrink-0 font-mono text-xs text-gray-600">{profile.city}</p>
+                    <p className="shrink-0 font-mono text-xs text-gray-600">
+                      {profile.city ?? "remote"}
+                    </p>
                   </div>
                   <p className="mt-1 truncate font-mono text-xs text-gray-600">
                     {match.last_message?.content ?? "start the thread."}
