@@ -35,6 +35,4 @@ npm run dev
 
 ## Current state
 
-The app has the full MVP surface in place: GitHub login, guarded app routes, discovery swipe cards, match modal, matches list, chat UI with realtime subscription, profile editing, and avatar upload wiring.
-
-Until real Supabase keys are configured, discovery, matches, and chat use local mock data so the interface can still be worked on.
+The app has the full MVP surface in place: GitHub login, guarded app routes, discovery swipe cards, match modal, matches list, chat UI with realtime subscription, profile editing.
