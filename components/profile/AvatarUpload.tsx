@@ -1,60 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { ChangeEvent, useEffect, useState } from "react";
-import { hasSupabaseConfig } from "@/lib/env";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect, useState } from "react";
 
 type AvatarUploadProps = {
-  userId: string | null;
   initialUrl?: string | null;
-  onUploaded: (url: string) => void;
 };
 
-export function AvatarUpload({ userId, initialUrl, onUploaded }: AvatarUploadProps) {
+export function AvatarUpload({ initialUrl }: AvatarUploadProps) {
   const [avatarUrl, setAvatarUrl] = useState(initialUrl ?? "");
-  const [uploading, setUploading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     setAvatarUrl(initialUrl ?? "");
   }, [initialUrl]);
-
-  async function upload(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file || !userId) return;
-    setErrorMessage(null);
-
-    if (!hasSupabaseConfig()) {
-      setErrorMessage("Add your Supabase keys before uploading avatars.");
-      return;
-    }
-
-    setUploading(true);
-    const supabase = createClient();
-    const extension = file.name.split(".").pop() ?? "jpg";
-    const path = `${userId}/${userId}-${Date.now()}.${extension}`;
-
-    const { error } = await supabase.storage.from("avatars").upload(path, file, {
-      cacheControl: "3600",
-      upsert: true
-    });
-
-    if (error) {
-      setErrorMessage(
-        error.message.includes("DatabaseSchemaMismatch")
-          ? "Supabase Storage is not ready. Enable Storage and create the avatars bucket."
-          : error.message
-      );
-      setUploading(false);
-      return;
-    }
-
-    const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-    setAvatarUrl(data.publicUrl);
-    onUploaded(data.publicUrl);
-    setUploading(false);
-  }
 
   return (
     <div>
@@ -63,13 +21,7 @@ export function AvatarUpload({ userId, initialUrl, onUploaded }: AvatarUploadPro
           <Image src={avatarUrl} alt="" fill sizes="128px" className="object-cover grayscale" />
         ) : null}
       </div>
-      <label className="mt-3 inline-block cursor-pointer font-mono text-xs">
-        {uploading ? "uploading" : "change photo"}
-        <input type="file" accept="image/*" className="sr-only" onChange={upload} />
-      </label>
-      {errorMessage ? (
-        <p className="mt-3 max-w-xs font-mono text-xs leading-5 text-gray-600">{errorMessage}</p>
-      ) : null}
+      <p className="mt-3 font-mono text-xs text-gray-600">github photo</p>
     </div>
   );
 }
