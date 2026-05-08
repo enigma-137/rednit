@@ -39,7 +39,7 @@ export function SwipeCard({
 
   return (
     <motion.article
-      className="absolute inset-0 bg-white p-5"
+      className="absolute inset-0 bg-white p-4 sm:p-5"
       style={{
         x: active ? x : 0,
         rotate: active ? rotate : 0,
@@ -74,8 +74,8 @@ export function SwipeCard({
         Pass
       </motion.div>
 
-      <div className="flex h-full flex-col border border-black">
-        <div className="relative aspect-square border-b border-black bg-gray-100">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden border border-black">
+        <div className="relative h-[52%] min-h-[220px] shrink-0 border-b border-black bg-gray-100 sm:h-[55%]">
           {profile.avatar_url ? (
             <Image
               src={profile.avatar_url}
@@ -88,37 +88,39 @@ export function SwipeCard({
           ) : null}
         </div>
 
-        <div className="flex flex-1 flex-col p-5">
-          <div>
-            <h2 className="text-2xl font-bold leading-tight tracking-[-0.01em]">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4 sm:p-5">
+          <div className="shrink-0">
+            <h2 className="truncate text-2xl font-bold leading-tight tracking-[-0.01em]">
               {profile.full_name ?? profile.username}
             </h2>
             <p className="mt-1 font-mono text-sm text-gray-600">{profile.city ?? "remote"}</p>
           </div>
 
-          <p className="mt-5 line-clamp-4 font-mono text-sm leading-6">
+          <p className="mt-4 line-clamp-3 font-mono text-sm leading-6">
             {profile.bio ?? "No bio yet. Suspicious, but not disqualifying."}
           </p>
 
-          <div className="mt-auto space-y-3 border-t border-gray-200 pt-5 font-mono text-xs">
+          <div className="mt-auto min-w-0 shrink-0 space-y-2 border-t border-gray-200 pt-4 font-mono text-xs">
             <a
               href={profile.github_url ?? `https://github.com/${profile.username}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2"
+              className="flex min-w-0 items-center gap-2"
             >
-              <Github aria-hidden className="h-4 w-4" strokeWidth={1.5} />
-              {profile.username}
+              <Github aria-hidden className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+              <span className="truncate">{profile.username}</span>
             </a>
             {profile.portfolio_url ? (
               <a
                 href={profile.portfolio_url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2"
+                className="flex min-w-0 items-center gap-2"
               >
-                <LinkIcon aria-hidden className="h-4 w-4" strokeWidth={1.5} />
-                {profile.portfolio_url.replace(/^https?:\/\//, "")}
+                <LinkIcon aria-hidden className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                <span className="truncate">
+                  {profile.portfolio_url.replace(/^https?:\/\//, "")}
+                </span>
               </a>
             ) : null}
           </div>

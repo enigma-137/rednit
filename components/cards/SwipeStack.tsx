@@ -15,8 +15,8 @@ export function SwipeStack({ profiles, onLike, onPass }: SwipeStackProps) {
   const top = visible[0];
 
   return (
-    <section className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center gap-8 px-5 py-8">
-      <div className="relative h-[min(70vh,680px)] w-full max-w-[420px] border border-black bg-white">
+    <section className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-start gap-5 px-3 pb-8 pt-2 sm:justify-center sm:gap-8 sm:px-5 sm:py-8">
+      <div className="relative h-[min(68vh,680px)] min-h-[500px] w-full max-w-[420px] border border-black bg-white sm:h-[min(72vh,680px)]">
         {visible.length ? (
           visible
             .map((profile, index) => (
