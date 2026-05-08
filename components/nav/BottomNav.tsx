@@ -7,7 +7,7 @@ import { Code2, Heart, MessagesSquare, User } from "lucide-react";
 const items = [
   { href: "/discover", label: "Discover", icon: Code2 },
   { href: "/matches", label: "Matches", icon: Heart },
-  { href: "/matches", label: "Messages", icon: MessagesSquare },
+  { href: "/messages", label: "Messages", icon: MessagesSquare },
   { href: "/profile", label: "Profile", icon: User }
 ];
 
@@ -20,8 +20,9 @@ export function BottomNav() {
         {items.map((item) => {
           const section = item.href.split("/")[1];
           const active =
-            pathname.startsWith(section ? `/${section}` : item.href) ||
-            (item.label === "Messages" && pathname.startsWith("/chat"));
+            (item.label === "Messages"
+              ? pathname === "/messages" || pathname.startsWith("/chat")
+              : pathname.startsWith(section ? `/${section}` : item.href));
           const Icon = item.icon;
 
           return (
