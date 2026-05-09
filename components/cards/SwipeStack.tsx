@@ -32,7 +32,7 @@ export function SwipeStack({ profiles, onLike, onPass }: SwipeStackProps) {
             .reverse()
         ) : (
           <div className="flex h-full items-center justify-center p-8 text-center font-mono text-sm">
-            no more profiles.
+            no profiles loaded.
           </div>
         )}
       </div>

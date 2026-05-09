@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { hasSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/client";
 import { mockProfiles } from "@/lib/mock-data";
 import type { Profile } from "@/lib/types";
 
-const BATCH_SIZE = 100;
+const BATCH_SIZE = 24;
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -19,11 +19,34 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export function useDiscover() {
   const [profiles, setProfiles] = useState<Profile[]>(hasSupabaseConfig() ? [] : mockProfiles);
-  const [allProfiles, setAllProfiles] = useState<Profile[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(hasSupabaseConfig());
-  const [offset, setOffset] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(hasSupabaseConfig());
+  const [nextRangeStart, setNextRangeStart] = useState(0);
   const [likedIds, setLikedIds] = useState<string[]>([]);
+
+  const loadProfileBatch = useCallback(
+    async (start: number, excludedLikeIds = likedIds) => {
+      if (!currentUserId || !hasSupabaseConfig()) return [];
+
+      const supabase = createClient();
+      let query = supabase
+        .from("profiles")
+        .select("*")
+        .neq("id", currentUserId)
+        .order("created_at", { ascending: false })
+        .range(start, start + BATCH_SIZE - 1);
+
+      if (excludedLikeIds.length) {
+        query = query.not("id", "in", `(${excludedLikeIds.join(",")})`);
+      }
+
+      const { data } = await query;
+      return shuffleArray(data ?? []);
+    },
+    [currentUserId, likedIds]
+  );
 
   useEffect(() => {
     if (!hasSupabaseConfig()) return;
@@ -54,7 +77,7 @@ export function useDiscover() {
         .select("*")
         .neq("id", user.id)
         .order("created_at", { ascending: false })
-        .limit(BATCH_SIZE);
+        .range(0, BATCH_SIZE - 1);
 
       if (likedIdsList.length) {
         query = query.not("id", "in", `(${likedIdsList.join(",")})`);
@@ -63,9 +86,9 @@ export function useDiscover() {
       const { data } = await query;
       const shuffled = shuffleArray(data ?? []);
 
-      setAllProfiles(shuffled);
-      setProfiles(shuffled.slice(0, 24));
-      setOffset(0);
+      setProfiles(shuffled);
+      setNextRangeStart(BATCH_SIZE);
+      setHasMore((data ?? []).length === BATCH_SIZE);
       setLoading(false);
     }
 
@@ -73,7 +96,11 @@ export function useDiscover() {
   }, []);
 
   async function like(profile: Profile) {
-    setProfiles((items) => items.filter((item) => item.id !== profile.id));
+    setProfiles((items) => {
+      const next = items.filter((item) => item.id !== profile.id);
+      if (next.length <= 3) void loadMore();
+      return next;
+    });
     if (!currentUserId || !hasSupabaseConfig()) return null;
 
     const supabase = createClient();
@@ -96,34 +123,33 @@ export function useDiscover() {
   }
 
   function pass(profile: Profile) {
-    setProfiles((items) => items.filter((item) => item.id !== profile.id));
+    setProfiles((items) => {
+      const next = items.filter((item) => item.id !== profile.id);
+      if (next.length <= 3) void loadMore();
+      return next;
+    });
   }
 
   async function loadMore() {
-    if (!currentUserId || !hasSupabaseConfig()) return;
+    if (!currentUserId || !hasSupabaseConfig() || loadingMore || !hasMore) return;
 
-    const supabase = createClient();
-    const newOffset = offset + BATCH_SIZE;
-
-    let query = supabase
-      .from("profiles")
-      .select("*")
-      .neq("id", currentUserId)
-      .order("created_at", { ascending: false })
-      .range(newOffset, newOffset + BATCH_SIZE - 1);
-
-    if (likedIds.length) {
-      query = query.not("id", "in", `(${likedIds.join(",")})`);
-    }
-
-    const { data } = await query;
-    if (data && data.length > 0) {
-      const shuffled = shuffleArray(data);
-      setAllProfiles((prev) => [...prev, ...shuffled]);
-      setProfiles((prev) => [...prev, ...shuffled.slice(0, 24)]);
-      setOffset(newOffset);
-    }
+    setLoadingMore(true);
+    const batch = await loadProfileBatch(nextRangeStart);
+    setProfiles((items) => {
+      const existingIds = new Set(items.map((item) => item.id));
+      const fresh = batch.filter((item) => !existingIds.has(item.id));
+      return [...items, ...fresh];
+    });
+    setNextRangeStart((start) => start + BATCH_SIZE);
+    setHasMore(batch.length === BATCH_SIZE);
+    setLoadingMore(false);
   }
 
-  return { profiles, loading, like, pass, loadMore };
+  useEffect(() => {
+    if (profiles.length <= 3) {
+      void loadMore();
+    }
+  }, [profiles.length]);
+
+  return { profiles, loading, loadingMore, hasMore, like, pass, loadMore };
 }

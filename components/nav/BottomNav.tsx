@@ -6,7 +6,7 @@ import { Code2, Heart, MessagesSquare, User } from "lucide-react";
 
 const items = [
   { href: "/discover", label: "Discover", icon: Code2 },
-  { href: "/matches", label: "Matches", icon: Heart },
+  { href: "/matches", label: "Likes", icon: Heart },
   { href: "/messages", label: "Messages", icon: MessagesSquare },
   { href: "/profile", label: "Profile", icon: User }
 ];

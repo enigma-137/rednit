@@ -1,12 +1,26 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Github, Heart } from "lucide-react";
 import { hasSupabaseConfig } from "@/lib/env";
-import { mockMatches } from "@/lib/mock-data";
+import { mockProfiles } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/server";
-import type { Match, Message, Profile } from "@/lib/types";
+import type { Profile } from "@/lib/types";
 
-async function getMatches() {
-  if (!hasSupabaseConfig()) return mockMatches;
+type IncomingLike = {
+  id: string;
+  created_at: string;
+  profile?: Profile;
+  matched: boolean;
+};
+
+async function getIncomingLikes(): Promise<IncomingLike[]> {
+  if (!hasSupabaseConfig()) {
+    return mockProfiles.slice(0, 2).map((profile, index) => ({
+      id: `mock-like-${profile.id}`,
+      created_at: new Date(Date.now() - index * 60000).toISOString(),
+      profile,
+      matched: index === 0
+    }));
+  }
 
   const supabase = createClient();
   const {
@@ -15,98 +29,76 @@ async function getMatches() {
 
   if (!user) return [];
 
-  const { data: matches } = await supabase
-    .from("matches")
-    .select("*")
-    .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
+  const { data: incomingLikes } = await supabase
+    .from("likes")
+    .select("id, from_user_id, created_at")
+    .eq("to_user_id", user.id)
     .order("created_at", { ascending: false });
 
-  if (!matches?.length) return [];
+  if (!incomingLikes?.length) return [];
 
-  const otherUserIds = matches.map((match) =>
-    match.user_a_id === user.id ? match.user_b_id : match.user_a_id
-  );
-  const matchIds = matches.map((match) => match.id);
+  const likerIds = incomingLikes.map((like) => like.from_user_id);
 
-  const [{ data: profiles }, { data: messages }] = await Promise.all([
-    supabase.from("profiles").select("*").in("id", otherUserIds),
-    supabase
-      .from("messages")
-      .select("*")
-      .in("match_id", matchIds)
-      .order("created_at", { ascending: false })
-      .limit(100)
+  const [{ data: profiles }, { data: outgoingLikes }] = await Promise.all([
+    supabase.from("profiles").select("*").in("id", likerIds),
+    supabase.from("likes").select("to_user_id").eq("from_user_id", user.id).in("to_user_id", likerIds)
   ]);
 
   const profilesById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
-  const latestMessageByMatchId = new Map<string, Message>();
+  const matchedIds = new Set((outgoingLikes ?? []).map((like) => like.to_user_id));
 
-  for (const message of messages ?? []) {
-    if (!latestMessageByMatchId.has(message.match_id)) {
-      latestMessageByMatchId.set(message.match_id, message);
-    }
-  }
-
-  return matches.map((match): Match => {
-    const otherUserId = match.user_a_id === user.id ? match.user_b_id : match.user_a_id;
-
-    return {
-      ...match,
-      other_profile: profilesById.get(otherUserId) as Profile | undefined,
-      last_message: latestMessageByMatchId.get(match.id) ?? null
-    };
-  });
+  return incomingLikes.map((like) => ({
+    id: like.id,
+    created_at: like.created_at,
+    profile: profilesById.get(like.from_user_id),
+    matched: matchedIds.has(like.from_user_id)
+  }));
 }
 
 export default async function MatchesPage() {
-  const matches = await getMatches();
+  const likes = await getIncomingLikes();
 
   return (
     <section className="mx-auto min-h-screen max-w-2xl px-5 py-8">
       <header className="border-b border-black pb-6">
-        <h1 className="text-3xl font-black tracking-[-0.02em]">matches</h1>
+        <h1 className="text-3xl font-black tracking-[-0.02em]">likes</h1>
       </header>
 
       <div className="divide-y divide-gray-200">
-        {matches.length ? (
-          matches.map((match, index) => {
-            const profile = match.other_profile;
+        {likes.length ? (
+          likes.map((like) => {
+            const profile = like.profile;
             if (!profile) return null;
 
             return (
-              <Link
-                href={`/chat/${match.id}`}
-                key={match.id}
-                className="grid grid-cols-[40px_1fr_8px] items-center gap-4 py-5"
-              >
-                <div className="relative h-10 w-10 border border-black bg-gray-100">
+              <article key={like.id} className="grid grid-cols-[56px_1fr_auto] items-center gap-4 py-5">
+                <div className="relative h-14 w-14 border border-black bg-gray-100">
                   {profile.avatar_url ? (
                     <Image
                       src={profile.avatar_url}
                       alt=""
                       fill
-                      sizes="40px"
+                      sizes="56px"
                       className="object-cover grayscale"
                     />
                   ) : null}
                 </div>
                 <div className="min-w-0">
-                  <div className="flex items-baseline gap-2">
-                    <p className="truncate font-bold">{profile.full_name ?? profile.username}</p>
-                    <p className="shrink-0 font-mono text-xs text-gray-600">
-                      {profile.city ?? "remote"}
-                    </p>
+                  <p className="truncate font-bold">{profile.full_name ?? profile.username}</p>
+                  <div className="mt-1 flex min-w-0 items-center gap-2 font-mono text-xs text-gray-600">
+                    <Github aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
+                    <span className="truncate">@{profile.username}</span>
                   </div>
-                  <p className="mt-1 truncate font-mono text-xs text-gray-600">
-                    {match.last_message?.content ?? "start the thread."}
-                  </p>
                 </div>
-                {index === 0 ? <div className="h-1.5 w-1.5 bg-black" /> : <div />}
-              </Link>
+                <div className="flex items-center gap-2 font-mono text-xs">
+                  {like.matched ? <span>matched</span> : <span>liked you</span>}
+                  <Heart aria-hidden className="h-4 w-4" strokeWidth={1.5} />
+                </div>
+              </article>
             );
           })
         ) : (
-          <p className="py-24 text-center font-mono text-sm">no matches yet.</p>
+          <p className="py-24 text-center font-mono text-sm">no likes yet.</p>
         )}
       </div>
     </section>

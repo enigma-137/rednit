@@ -107,7 +107,7 @@ create policy "users can create own profile"
 drop policy if exists "users see own likes" on public.likes;
 create policy "users see own likes"
   on public.likes for select
-  using (auth.uid() = from_user_id);
+  using (auth.uid() = from_user_id or auth.uid() = to_user_id);
 
 drop policy if exists "users insert own likes" on public.likes;
 create policy "users insert own likes"

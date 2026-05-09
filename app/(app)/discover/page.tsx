@@ -8,7 +8,7 @@ import { useDiscover } from "@/lib/hooks/useDiscover";
 import type { Profile } from "@/lib/types";
 
 export default function DiscoverPage() {
-  const { profiles, loading, like, pass } = useDiscover();
+  const { profiles, loading, loadingMore, hasMore, like, pass, loadMore } = useDiscover();
   const [matchedProfile, setMatchedProfile] = useState<Profile | null>(null);
 
   async function handleLike(profile: Profile) {
@@ -25,6 +25,16 @@ export default function DiscoverPage() {
       ) : (
         <SwipeStack profiles={profiles} onLike={handleLike} onPass={pass} />
       )}
+      {!loading && profiles.length === 0 && hasMore ? (
+        <div className="fixed inset-x-0 bottom-20 flex justify-center">
+          <button
+            onClick={() => void loadMore()}
+            className="border border-black bg-white px-4 py-3 font-sans text-xs font-bold uppercase tracking-[0.1em]"
+          >
+            {loadingMore ? "Loading" : "Load More"}
+          </button>
+        </div>
+      ) : null}
       <AnimatePresence>
         <MatchModal profile={matchedProfile} onClose={() => setMatchedProfile(null)} />
       </AnimatePresence>
