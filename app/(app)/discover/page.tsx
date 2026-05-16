@@ -8,12 +8,12 @@ import { useDiscover } from "@/lib/hooks/useDiscover";
 import type { Profile } from "@/lib/types";
 
 export default function DiscoverPage() {
-  const { profiles, loading, loadingMore, hasMore, like, pass, loadMore } = useDiscover();
-  const [matchedProfile, setMatchedProfile] = useState<Profile | null>(null);
+  const { profiles, currentUserProfile, loading, loadingMore, hasMore, like, pass, loadMore } = useDiscover();
+  const [matchData, setMatchData] = useState<{ profile: Profile; matchId: string } | null>(null);
 
   async function handleLike(profile: Profile) {
-    const match = await like(profile);
-    if (match) setMatchedProfile(match);
+    const matchResult = await like(profile);
+    if (matchResult) setMatchData(matchResult);
   }
 
   return (
@@ -36,7 +36,12 @@ export default function DiscoverPage() {
         </div>
       ) : null}
       <AnimatePresence>
-        <MatchModal profile={matchedProfile} onClose={() => setMatchedProfile(null)} />
+        <MatchModal 
+          profile={matchData?.profile ?? null} 
+          currentUser={currentUserProfile}
+          matchId={matchData?.matchId ?? null}
+          onClose={() => setMatchData(null)} 
+        />
       </AnimatePresence>
     </>
   );

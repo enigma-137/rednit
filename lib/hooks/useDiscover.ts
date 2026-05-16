@@ -20,6 +20,9 @@ function shuffleArray<T>(array: T[]): T[] {
 export function useDiscover() {
   const [profiles, setProfiles] = useState<Profile[]>(hasSupabaseConfig() ? [] : mockProfiles);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(
+    hasSupabaseConfig() ? null : mockProfiles[0]
+  );
   const [loading, setLoading] = useState(hasSupabaseConfig());
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(hasSupabaseConfig());
@@ -62,6 +65,11 @@ export function useDiscover() {
       if (!user) {
         setLoading(false);
         return;
+      }
+
+      const { data: profileData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+      if (profileData) {
+        setCurrentUserProfile(profileData);
       }
 
       const { data: likedRows } = await supabase
@@ -119,7 +127,7 @@ export function useDiscover() {
       .eq("user_b_id", userBId)
       .maybeSingle();
 
-    return match ? profile : null;
+    return match ? { profile, matchId: match.id } : null;
   }
 
   function pass(profile: Profile) {
@@ -151,5 +159,5 @@ export function useDiscover() {
     }
   }, [profiles.length]);
 
-  return { profiles, loading, loadingMore, hasMore, like, pass, loadMore };
+  return { profiles, currentUserProfile, loading, loadingMore, hasMore, like, pass, loadMore };
 }

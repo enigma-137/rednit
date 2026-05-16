@@ -1,16 +1,21 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import type { Profile } from "@/lib/types";
 
 type MatchModalProps = {
   profile: Profile | null;
+  currentUser: Profile | null;
+  matchId: string | null;
   onClose: () => void;
 };
 
-export function MatchModal({ profile, onClose }: MatchModalProps) {
+export function MatchModal({ profile, currentUser, matchId, onClose }: MatchModalProps) {
+  const router = useRouter();
+
   if (!profile) return null;
 
   return (
@@ -24,8 +29,8 @@ export function MatchModal({ profile, onClose }: MatchModalProps) {
       <div className="w-full max-w-sm text-center">
         <div className="mx-auto grid h-32 w-64 grid-cols-[1fr_1px_1fr] border border-black">
           <div className="relative bg-gray-100">
-            {profile.avatar_url ? (
-              <Image src={profile.avatar_url} alt="" fill sizes="128px" className="object-cover grayscale" />
+            {currentUser?.avatar_url ? (
+              <Image src={currentUser.avatar_url} alt="" fill sizes="128px" className="object-cover grayscale" />
             ) : null}
           </div>
           <div className="bg-black" />
@@ -40,7 +45,9 @@ export function MatchModal({ profile, onClose }: MatchModalProps) {
         </h2>
         <p className="mt-4 font-mono text-sm">@{profile.username}</p>
         <div className="mt-12 grid gap-3">
-          <Button>Send Message</Button>
+          <Button onClick={() => { if (matchId) router.push(`/chat/${matchId}`); }}>
+            Send Message
+          </Button>
           <Button variant="outline" onClick={onClose}>
             Keep Swiping
           </Button>
