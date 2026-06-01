@@ -36,10 +36,12 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isLogin = path === "/login";
   const isLanding = path === "/";
+  const isPreview = path === "/preview" || path.startsWith("/preview/");
   const isPublicAsset =
     path.startsWith("/_next") ||
     path.startsWith("/favicon") ||
-    path.startsWith("/api/auth/callback");
+    path.startsWith("/api/auth/callback") ||
+    isPreview;
 
   if (!user && !isLogin && !isLanding && !isPublicAsset) {
     const url = request.nextUrl.clone();
