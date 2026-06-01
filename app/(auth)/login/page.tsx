@@ -32,7 +32,7 @@ export default function LoginPage() {
         <p className="mt-4 font-mono text-sm text-gray-600">
           {"// for developers only"}
         </p>
-        <Button onClick={signInWithGithub} className="mt-12 w-full gap-3">
+        <Button onClick={signInWithGithub} disabled className="mt-12 w-full gap-3">
           <Github aria-hidden className="h-4 w-4" strokeWidth={1.75} />
           Continue with GitHub
         </Button>
