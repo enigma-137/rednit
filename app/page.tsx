@@ -41,13 +41,14 @@ export default function HomePage() {
 
         <div className="mx-auto grid w-full max-w-6xl items-center gap-12 py-12 lg:grid-cols-[1fr_420px]">
           <section className="max-w-3xl">
-            <p className="font-mono text-sm text-gray-600">{"// github-only dating"}</p>
+            <p className="font-mono text-sm text-gray-600">{"// developers meeting — we are cooking"}</p>
             <h1 className="mt-6 text-[56px] font-black leading-[0.92] tracking-[-0.04em] sm:text-[88px] lg:text-[112px]">
-              date developers. not profiles.
+              meet founders. meet friends. build together.
             </h1>
             <p className="mt-8 max-w-xl font-mono text-sm leading-7 text-gray-800 sm:text-base">
-              rednit is a monochrome dating app for people who ship, refactor,
-              argue about naming, and still believe a good README means something.
+              rednit is a minimalist developers meeting app to find collaborators,
+              discover job opportunities, hire talent, and build things together.
+              We're cooking — join us.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -105,9 +106,9 @@ export default function HomePage() {
         </div>
 
         <footer className="mx-auto grid w-full max-w-6xl grid-cols-1 border-t border-black py-5 font-mono text-xs text-gray-600 sm:grid-cols-3">
-          <span>github oauth only</span>
-          <span>zero color interface</span>
-          <span>realtime matches and chat</span>
+          <span>meet founders & teams</span>
+          <span>hire & find jobs</span>
+          <span>we are cooking</span>
         </footer>
       </section>
     </main>
