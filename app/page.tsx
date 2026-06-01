@@ -31,12 +31,14 @@ export default function HomePage() {
           <Link href="/" className="text-xl font-black tracking-[-0.04em]">
             rednit
           </Link>
-          <Link
-            href="/login"
-            className="font-sans text-xs font-bold uppercase tracking-[0.1em]"
+          <button
+            disabled
+            title="Login disabled — we're building"
+            className="font-sans text-xs font-bold uppercase tracking-[0.1em] disabled:cursor-not-allowed disabled:opacity-40"
+            aria-disabled="true"
           >
             Login
-          </Link>
+          </button>
         </header>
 
         <div className="mx-auto grid w-full max-w-6xl items-center gap-12 py-12 lg:grid-cols-[1fr_420px]">
@@ -52,7 +54,12 @@ export default function HomePage() {
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Button onClick={signInWithGithub} className="gap-3">
+              <Button
+                disabled
+                title="Sign in disabled — we're building"
+                aria-disabled="true"
+                className="gap-3"
+              >
                 <Github aria-hidden className="h-4 w-4" strokeWidth={1.75} />
                 Continue with GitHub
               </Button>
