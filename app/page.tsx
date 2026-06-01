@@ -64,7 +64,7 @@ export default function HomePage() {
                 Continue with GitHub
               </Button>
               <Link
-                href="/discover"
+                href="/preview"
                 className="inline-flex h-12 items-center justify-center border border-black bg-white px-5 font-sans text-xs font-bold uppercase tracking-[0.1em] transition-colors duration-150 hover:bg-black hover:text-white"
               >
                 Preview App
