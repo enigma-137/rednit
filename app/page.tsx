@@ -1,12 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Github, Heart, MessageSquare, Terminal } from "lucide-react";
+import { Github, Heart, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { hasSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/client";
 
+const profiles = [
+  {
+    name: "Maya",
+    location: "Berlin",
+    description: "Design systems, product thinking, remote-first teams.",
+    image:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Noah",
+    location: "Lisbon",
+    description: "Full-stack, APIs, clean architecture, async work.",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Avery",
+    location: "New York",
+    description: "Community builder, launching products, UX-led thinking.",
+    image:
+      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Riley",
+    location: "Toronto",
+    description: "Open source, developer tooling, small teams, fast feedback.",
+    image:
+      "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=80"
+  }
+];
+
 export default function HomePage() {
+  const [activeProfileIndex, setActiveProfileIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setActiveProfileIndex((index) => (index + 1) % profiles.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
   async function signInWithGithub() {
     if (!hasSupabaseConfig()) {
       window.location.href = "/discover";
@@ -80,23 +122,28 @@ export default function HomePage() {
             <div className="p-4">
               <div className="border border-black">
                 <div className="aspect-square border-b border-black bg-gray-100">
-                  <div className="grid h-full place-items-center">
-                    <Terminal aria-hidden className="h-20 w-20" strokeWidth={1} />
+                  <div className="h-full overflow-hidden">
+                    <img
+                      src={profiles[activeProfileIndex].image}
+                      alt={profiles[activeProfileIndex].name}
+                      className="h-full w-full object-cover grayscale"
+                    />
                   </div>
                 </div>
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h2 className="text-2xl font-bold tracking-[-0.01em]">
-                        senior frontend
+                        {profiles[activeProfileIndex].name}
                       </h2>
-                      <p className="mt-1 font-mono text-sm text-gray-600">Lagos</p>
+                      <p className="mt-1 font-mono text-sm text-gray-600">
+                        {profiles[activeProfileIndex].location}
+                      </p>
                     </div>
                     <div className="h-2 w-2 bg-black" />
                   </div>
                   <p className="mt-5 font-mono text-sm leading-6">
-                    Typescript, motion systems, tiny interfaces, clean commits,
-                    coffee after deploys.
+                    {profiles[activeProfileIndex].description}
                   </p>
                   <div className="mt-6 grid grid-cols-2 gap-3 border-t border-gray-200 pt-5">
                     <div className="flex h-12 items-center justify-center border border-black">
