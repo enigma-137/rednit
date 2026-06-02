@@ -50,7 +50,7 @@ export default function HomePage() {
             <p className="mt-8 max-w-xl font-mono text-sm leading-7 text-gray-800 sm:text-base">
               rednit is a minimalist developers meeting app to find collaborators,
               discover job opportunities, hire talent, and build things together.
-              We're cooking — join us.
+              We&apos;re cooking — join us.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
