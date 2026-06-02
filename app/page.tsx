@@ -9,25 +9,25 @@ import { createClient } from "@/lib/supabase/client";
 
 const profiles = [
   {
+    name: "Ada",
+    location: "Lagos",
+    description: "Founder, product strategy, community-led build.",
+    image:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Chike",
+    location: "Abuja",
+    description: "Backend systems, startups, developer communities.",
+    image:
+      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=80"
+  },
+  {
     name: "Maya",
     location: "Berlin",
     description: "Design systems, product thinking, remote-first teams.",
     image:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
-  },
-  {
-    name: "Noah",
-    location: "Lisbon",
-    description: "Full-stack, APIs, clean architecture, async work.",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
-  },
-  {
-    name: "Avery",
-    location: "New York",
-    description: "Community builder, launching products, UX-led thinking.",
-    image:
-      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80"
   },
   {
     name: "Riley",
