@@ -31,7 +31,7 @@ const profiles = [
   },
   {
     name: "Abdul",
-    location: "Port Harcourt",
+    location: "Kano",
     description: "Java backend lead, microservices, enterprise systems.",
     image:
       "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -42,6 +42,34 @@ const profiles = [
     description: "No-code WordPress maker, product launches, landing pages.",
     image:
       "https://images.unsplash.com/photo-1620932934088-fbdb2920e484?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    name: "Maya",
+    location: "Berlin",
+    description: "Design systems, product thinking, remote-first teams.",
+    image:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Noah",
+    location: "Lisbon",
+    description: "Full-stack, APIs, clean architecture, async work.",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Avery",
+    location: "New York",
+    description: "Community builder, launching products, UX-led thinking.",
+    image:
+      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    name: "Riley",
+    location: "Toronto",
+    description: "Open source, developer tooling, small teams, fast feedback.",
+    image:
+      "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=80"
   }
 ];
 
