@@ -120,9 +120,9 @@ export default function HomePage() {
 
         <div className="mx-auto grid w-full max-w-6xl items-center gap-12 py-12 lg:grid-cols-[1fr_420px]">
           <section className="max-w-3xl">
-            <p className="font-mono text-sm text-gray-600">{"// developers meeting — we are cooking"}</p>
+            <p className="font-mono text-sm text-gray-600">{"// developers meeting"}</p>
             <h1 className="mt-6 text-[56px] font-black leading-[0.92] tracking-[-0.04em] sm:text-[88px] lg:text-[112px]">
-              meet founders. meet friends. build together.
+              meet co-founders. friends. build together.
             </h1>
             <p className="mt-8 max-w-xl font-mono text-sm leading-7 text-gray-800 sm:text-base">
               rednit is a minimalist developers meeting app to find collaborators,
