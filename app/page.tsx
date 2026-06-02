@@ -108,14 +108,25 @@ export default function HomePage() {
           <Link href="/" className="text-xl font-black tracking-[-0.04em]">
             rednit
           </Link>
-          <button
-            disabled
-            title="Login disabled — we're building"
-            className="font-sans text-xs font-bold uppercase tracking-[0.1em] disabled:cursor-not-allowed disabled:opacity-40"
-            aria-disabled="true"
-          >
-            Login
-          </button>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://github.com/enigma-137/rednit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-sans text-xs font-bold uppercase tracking-[0.1em] transition-colors duration-150 hover:underline"
+            >
+              <Github aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+              GitHub
+            </a>
+            <button
+              disabled
+              title="Login disabled — we're building"
+              className="font-sans text-xs font-bold uppercase tracking-[0.1em] disabled:cursor-not-allowed disabled:opacity-40"
+              aria-disabled="true"
+            >
+              Login
+            </button>
+          </div>
         </header>
 
         <div className="mx-auto grid w-full max-w-6xl items-center gap-12 py-12 lg:grid-cols-[1fr_420px]">
