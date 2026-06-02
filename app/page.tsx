@@ -9,32 +9,39 @@ import { createClient } from "@/lib/supabase/client";
 
 const profiles = [
   {
-    name: "Ada",
-    location: "Lagos",
-    description: "Founder, product strategy, community-led build.",
-    image:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80"
-  },
-  {
     name: "Chike",
+    location: "Lagos",
+    description: "Backend engineer, APIs, system design, fast scaling.",
+    image:
+      "https://images.unsplash.com/photo-1507152832244-10d45c7eda57?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    name: "Ada",
     location: "Abuja",
-    description: "Backend systems, startups, developer communities.",
+    description: "UI/UX lead, product interfaces, design systems.",
     image:
-      "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=80"
+      "https://images.unsplash.com/photo-1523824921871-d6f1a15151f1?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
-    name: "Maya",
-    location: "Berlin",
-    description: "Design systems, product thinking, remote-first teams.",
+    name: "Tolani",
+    location: "Lagos",
+    description: "DevOps engineer, automation, cloud, reliability.",
     image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+      "https://images.unsplash.com/photo-1614317226704-aba58b1ce153?q=80&w=728&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
-    name: "Riley",
-    location: "Toronto",
-    description: "Open source, developer tooling, small teams, fast feedback.",
+    name: "Abdul",
+    location: "Port Harcourt",
+    description: "Java backend lead, microservices, enterprise systems.",
     image:
-      "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=900&q=80"
+      "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    name: "Kingsley",
+    location: "Ibadan",
+    description: "No-code WordPress maker, product launches, landing pages.",
+    image:
+      "https://images.unsplash.com/photo-1620932934088-fbdb2920e484?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   }
 ];
 
