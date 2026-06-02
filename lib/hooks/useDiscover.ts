@@ -138,7 +138,7 @@ export function useDiscover() {
     });
   }
 
-  async function loadMore() {
+  const loadMore = useCallback(async () => {
     if (!currentUserId || !hasSupabaseConfig() || loadingMore || !hasMore) return;
 
     setLoadingMore(true);
@@ -151,13 +151,13 @@ export function useDiscover() {
     setNextRangeStart((start) => start + BATCH_SIZE);
     setHasMore(batch.length === BATCH_SIZE);
     setLoadingMore(false);
-  }
+  }, [currentUserId, hasMore, loadingMore, nextRangeStart, loadProfileBatch]);
 
   useEffect(() => {
     if (profiles.length <= 3) {
       void loadMore();
     }
-  }, [profiles.length]);
+  }, [profiles.length, loadMore]);
 
   return { profiles, currentUserProfile, loading, loadingMore, hasMore, like, pass, loadMore };
 }
