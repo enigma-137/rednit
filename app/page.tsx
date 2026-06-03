@@ -84,22 +84,22 @@ export default function HomePage() {
     return () => window.clearInterval(interval);
   }, []);
 
-  async function signInWithGithub() {
-    if (!hasSupabaseConfig()) {
-      window.location.href = "/discover";
-      return;
-    }
+  // async function signInWithGithub() {
+  //   if (!hasSupabaseConfig()) {
+  //     window.location.href = "/discover";
+  //     return;
+  //   }
 
-    const supabase = createClient();
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
+  //   const supabase = createClient();
+  //   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
 
-    await supabase.auth.signInWithOAuth({
-      provider: "github",
-      options: {
-        redirectTo: `${siteUrl}/api/auth/callback`
-      }
-    });
-  }
+  //   await supabase.auth.signInWithOAuth({
+  //     provider: "github",
+  //     options: {
+  //       redirectTo: `${siteUrl}/api/auth/callback`
+  //     }
+  //   });
+  // }
 
   return (
     <main className="min-h-screen bg-white text-black">
