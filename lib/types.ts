@@ -39,8 +39,8 @@ export type Community = {
   name: string;
   slug: string;
   description: string | null;
-  avatar_url: string | null;
-  banner_url: string | null;
+  avatar_url?: string | null;
+  banner_url?: string | null;
   created_at?: string;
 };
 
