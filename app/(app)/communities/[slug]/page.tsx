@@ -6,10 +6,13 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Users, Shield, LogOut, Check, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useCommunities } from "@/lib/hooks/useCommunities";
+import { useFeed } from "@/lib/hooks/useFeed";
+import { PostComposer } from "@/components/posts/PostComposer";
+import { PostCard } from "@/components/posts/PostCard";
 import { createClient } from "@/lib/supabase/client";
 import { hasSupabaseConfig } from "@/lib/env";
 import { mockProfiles } from "@/lib/mock-data";
-import type { Community, Profile } from "@/lib/types";
+import type { Community, Profile, Post } from "@/lib/types";
 
 export default function CommunityDashboardPage() {
   const params = useParams();
@@ -24,6 +27,8 @@ export default function CommunityDashboardPage() {
     getMemberCount
   } = useCommunities();
 
+  const { posts, loading: feedLoading, loadPosts } = useFeed();
+
   const [community, setCommunity] = useState<Community | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMember, setIsMember] = useState(false);
@@ -31,6 +36,7 @@ export default function CommunityDashboardPage() {
   const [members, setMembers] = useState<Profile[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [localPosts, setLocalPosts] = useState<Post[]>([]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -49,6 +55,9 @@ export default function CommunityDashboardPage() {
     setIsMember(memberStatus);
     setMemberCount(count);
     setLoading(false);
+
+    // Fetch feed posts for this community
+    void loadPosts(comm.id);
 
     // Fetch members profile roster
     setLoadingMembers(true);
@@ -78,11 +87,19 @@ export default function CommunityDashboardPage() {
       }
     }
     setLoadingMembers(false);
-  }, [slug, loadCommunityBySlug, checkIsMember, getMemberCount]);
+  }, [slug, loadCommunityBySlug, checkIsMember, getMemberCount, loadPosts]);
 
   useEffect(() => {
     void loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    setLocalPosts(posts);
+  }, [posts]);
+
+  function handlePostCreated(newPost: Post) {
+    setLocalPosts((curr) => [newPost, ...curr]);
+  }
 
   async function handleToggleMembership() {
     if (!community || actionLoading) return;
@@ -193,14 +210,34 @@ export default function CommunityDashboardPage() {
 
       {/* Main Grid: Discussions Feed & Members Roster */}
       <div className="grid gap-8 mt-8 lg:grid-cols-[1fr_280px]">
-        {/* Left Column: Feed discussions placeholder */}
+        {/* Left Column: Feed discussions list */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold tracking-tight border-b border-black pb-2">
             discussions feed
           </h2>
-          <div className="border border-dashed border-gray-300 p-8 text-center font-mono text-xs text-gray-500 py-16">
-            Discussions feed is cooking for Milestone 4. Free posting, updates, and replies are coming next.
-          </div>
+          {isMember ? (
+            <PostComposer communityId={community.id} onPostCreated={handlePostCreated} />
+          ) : (
+            <div className="border border-dashed border-gray-300 p-4 text-center font-mono text-xs text-gray-500 bg-gray-50">
+              Only members of this community can write posts. Join this family to write!
+            </div>
+          )}
+
+          {feedLoading ? (
+            <div className="py-12 text-center font-mono text-xs text-gray-400">
+              loading feed posts...
+            </div>
+          ) : localPosts.length === 0 ? (
+            <div className="py-16 border border-dashed border-gray-200 text-center font-mono text-xs text-gray-500">
+              No discussions yet. Write the first update inside {community.name}!
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {localPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Right Column: Members roster */}

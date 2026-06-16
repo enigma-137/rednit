@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Code2, Heart, MessagesSquare, User } from "lucide-react";
+import { Code2, MessageSquare, Users, MessagesSquare, User } from "lucide-react";
 
 const items = [
   { href: "/discover", label: "Discover", icon: Code2 },
-  { href: "/matches", label: "Likes", icon: Heart },
+  { href: "/feed", label: "Feed", icon: MessageSquare },
+  { href: "/communities", label: "Communities", icon: Users },
   { href: "/messages", label: "Messages", icon: MessagesSquare },
   { href: "/profile", label: "Profile", icon: User }
 ];
@@ -16,7 +17,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black bg-white">
-      <div className="mx-auto grid h-16 max-w-xl grid-cols-4">
+      <div className="mx-auto grid h-16 max-w-xl grid-cols-5">
         {items.map((item) => {
           const section = item.href.split("/")[1];
           const active =
@@ -30,7 +31,7 @@ export function BottomNav() {
               key={item.label}
               href={item.href}
               className={`flex items-center justify-center border-r border-gray-200 last:border-r-0 ${
-                active ? "bg-black text-white" : "bg-white text-black"
+                active ? "bg-black text-white" : "bg-white text-black hover:bg-gray-100"
               }`}
               aria-label={item.label}
             >
