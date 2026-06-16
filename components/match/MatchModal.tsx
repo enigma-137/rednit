@@ -40,8 +40,8 @@ export function MatchModal({ profile, currentUser, matchId, onClose }: MatchModa
             ) : null}
           </div>
         </div>
-        <h2 className="mt-10 text-[64px] font-black leading-none tracking-[-0.04em]">
-          MATCH.
+        <h2 className="mt-10 text-[54px] font-black leading-none tracking-[-0.04em]">
+          CONNECTED.
         </h2>
         <p className="mt-4 font-mono text-sm">@{profile.username}</p>
         <div className="mt-12 grid gap-3">
@@ -49,7 +49,7 @@ export function MatchModal({ profile, currentUser, matchId, onClose }: MatchModa
             Send Message
           </Button>
           <Button variant="outline" onClick={onClose}>
-            Keep Swiping
+            Keep Discovering
           </Button>
         </div>
       </div>

@@ -62,20 +62,20 @@ export function SwipeCard({
       }}
     >
       <motion.div
-        className="pointer-events-none absolute left-4 top-4 font-mono text-sm font-bold uppercase tracking-[0.1em]"
+        className="pointer-events-none absolute left-4 top-4 font-mono text-sm font-bold uppercase tracking-[0.1em] border border-black bg-white px-3 py-1 text-black shadow-sm"
         style={{ opacity: likeOpacity }}
       >
-        Like
+        Connect
       </motion.div>
       <motion.div
-        className="pointer-events-none absolute right-4 top-4 font-mono text-sm font-bold uppercase tracking-[0.1em]"
+        className="pointer-events-none absolute right-4 top-4 font-mono text-sm font-bold uppercase tracking-[0.1em] border border-black bg-white px-3 py-1 text-black shadow-sm"
         style={{ opacity: passOpacity }}
       >
-        Pass
+        Skip
       </motion.div>
 
       <div className="flex h-full min-h-0 flex-col overflow-hidden border border-black">
-        <div className="relative h-[52%] min-h-[220px] shrink-0 border-b border-black bg-gray-100 sm:h-[55%]">
+        <div className="relative h-[40%] min-h-[160px] shrink-0 border-b border-black bg-gray-100 sm:h-[45%]">
           {profile.avatar_url ? (
             <Image
               src={profile.avatar_url}
@@ -93,21 +93,54 @@ export function SwipeCard({
             <h2 className="truncate text-2xl font-bold leading-tight tracking-[-0.01em]">
               {profile.full_name ?? profile.username}
             </h2>
-            <p className="mt-1 font-mono text-sm text-gray-600">{profile.city ?? "remote"}</p>
+            {(profile.role_title || profile.company) && (
+              <p className="mt-1 font-mono text-sm text-gray-800 font-bold truncate">
+                {profile.role_title}
+                {profile.role_title && profile.company && " @ "}
+                {profile.company}
+              </p>
+            )}
+            <p className="mt-0.5 font-mono text-xs text-gray-500">{profile.city ?? "remote"}</p>
           </div>
 
-          <p className="mt-4 line-clamp-3 font-mono text-sm leading-6">
+          <p className="mt-3 line-clamp-2 font-mono text-xs leading-5">
             {profile.bio ?? "No bio yet. Suspicious, but not disqualifying."}
           </p>
 
-          <div className="mt-auto min-w-0 shrink-0 space-y-2 border-t border-gray-200 pt-4 font-mono text-xs">
+          {profile.looking_for && profile.looking_for.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1 shrink-0">
+              {profile.looking_for.map((item) => (
+                <span
+                  key={item}
+                  className="border border-black bg-black text-white px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider"
+                >
+                  {item.replace("-", " ")}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {profile.skills && profile.skills.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1 shrink-0">
+              {profile.skills.slice(0, 4).map((skill) => (
+                <span
+                  key={skill}
+                  className="border border-black bg-gray-100 px-2 py-0.5 font-mono text-[9px] text-black"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-auto min-w-0 shrink-0 space-y-1.5 border-t border-gray-200 pt-3 font-mono text-xs">
             <a
               href={profile.github_url ?? `https://github.com/${profile.username}`}
               target="_blank"
               rel="noreferrer"
               className="flex min-w-0 items-center gap-2"
             >
-              <Github aria-hidden className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+              <Github aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
               <span className="truncate">{profile.username}</span>
             </a>
             {profile.portfolio_url ? (
@@ -117,7 +150,7 @@ export function SwipeCard({
                 rel="noreferrer"
                 className="flex min-w-0 items-center gap-2"
               >
-                <LinkIcon aria-hidden className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                <LinkIcon aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
                 <span className="truncate">
                   {profile.portfolio_url.replace(/^https?:\/\//, "")}
                 </span>
