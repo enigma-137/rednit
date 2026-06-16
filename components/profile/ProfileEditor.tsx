@@ -20,7 +20,7 @@ const fallbackProfile: Profile = {
   city: "",
   skills: [],
   looking_for: [],
-  current_role: "",
+  role_title: "",
   company: "",
   twitter_url: ""
 };
@@ -141,7 +141,7 @@ export function ProfileEditor() {
         github_url: profile.github_url || `https://github.com/${username}`,
         skills: profile.skills,
         looking_for: profile.looking_for,
-        current_role: profile.current_role,
+        role_title: profile.role_title,
         company: profile.company,
         twitter_url: profile.twitter_url,
         updated_at: new Date().toISOString()
@@ -184,9 +184,9 @@ export function ProfileEditor() {
         />
         <Input
           label="current role"
-          value={profile.current_role ?? ""}
+          value={profile.role_title ?? ""}
           placeholder="e.g. Senior Backend Engineer"
-          onChange={(event) => update("current_role", event.target.value)}
+          onChange={(event) => update("role_title", event.target.value)}
         />
         <Input
           label="company"

@@ -12,7 +12,7 @@ export const mockProfiles: Profile[] = [
     city: "London",
     skills: ["Rust", "C", "Compiler Design", "Assembly"],
     looking_for: ["co-founder", "friend"],
-    current_role: "Lead Compiler Architect",
+    role_title: "Lead Compiler Architect",
     company: "Analytical Engine Corp",
     twitter_url: "https://twitter.com/ada_lovelace"
   },
@@ -27,7 +27,7 @@ export const mockProfiles: Profile[] = [
     city: "New York",
     skills: ["COBOL", "Systems Programming", "Fortran"],
     looking_for: ["employee", "friend"],
-    current_role: "Rear Admiral & Engineer",
+    role_title: "Rear Admiral & Engineer",
     company: "US Navy",
     twitter_url: "https://twitter.com/grace_hopper"
   },
@@ -42,7 +42,7 @@ export const mockProfiles: Profile[] = [
     city: "Helsinki",
     skills: ["C", "Git", "Linux Kernel", "Assembly"],
     looking_for: ["co-founder", "employee", "friend"],
-    current_role: "Linux Creator",
+    role_title: "Linux Creator",
     company: "Linux Foundation",
     twitter_url: "https://twitter.com/linus_torvalds"
   }

@@ -11,7 +11,7 @@ create table if not exists public.profiles (
   city text,
   skills text[],
   looking_for text[],
-  current_role text,
+  role_title text,
   company text,
   twitter_url text,
   created_at timestamptz default now(),

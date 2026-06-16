@@ -53,10 +53,10 @@ export default async function ProfilePage() {
           <h2 className="mt-8 text-4xl font-black tracking-[-0.03em]">
             {profile.full_name || profile.username}
           </h2>
-          {(profile.current_role || profile.company) && (
+          {(profile.role_title || profile.company) && (
             <p className="mt-2 font-mono text-sm text-gray-800 font-bold">
-              {profile.current_role}
-              {profile.current_role && profile.company && " @ "}
+              {profile.role_title}
+              {profile.role_title && profile.company && " @ "}
               {profile.company}
             </p>
           )}

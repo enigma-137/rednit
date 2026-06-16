@@ -9,7 +9,7 @@ export type Profile = {
   city: string | null;
   skills: string[] | null;
   looking_for: string[] | null;
-  current_role: string | null;
+  role_title: string | null;
   company: string | null;
   twitter_url: string | null;
   created_at?: string;
