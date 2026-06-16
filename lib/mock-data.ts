@@ -9,7 +9,12 @@ export const mockProfiles: Profile[] = [
     bio: "Compiler romantic. I write notes in the margin and tests before coffee.",
     portfolio_url: "https://example.com/ada",
     github_url: "https://github.com/ada-l",
-    city: "London"
+    city: "London",
+    skills: ["Rust", "C", "Compiler Design", "Assembly"],
+    looking_for: ["co-founder", "friend"],
+    current_role: "Lead Compiler Architect",
+    company: "Analytical Engine Corp",
+    twitter_url: "https://twitter.com/ada_lovelace"
   },
   {
     id: "7f0e4e16-6f34-46c5-ae2e-000000000002",
@@ -19,7 +24,12 @@ export const mockProfiles: Profile[] = [
     bio: "Distributed systems, precise words, and tiny CLIs that do one thing beautifully.",
     portfolio_url: "https://example.com/grace",
     github_url: "https://github.com/grace-h",
-    city: "New York"
+    city: "New York",
+    skills: ["COBOL", "Systems Programming", "Fortran"],
+    looking_for: ["employee", "friend"],
+    current_role: "Rear Admiral & Engineer",
+    company: "US Navy",
+    twitter_url: "https://twitter.com/grace_hopper"
   },
   {
     id: "7f0e4e16-6f34-46c5-ae2e-000000000003",
@@ -29,7 +39,12 @@ export const mockProfiles: Profile[] = [
     bio: "Kernel mode, direct communication, and bike rides between review queues.",
     portfolio_url: "https://example.com/linus",
     github_url: "https://github.com/linus-t",
-    city: "Helsinki"
+    city: "Helsinki",
+    skills: ["C", "Git", "Linux Kernel", "Assembly"],
+    looking_for: ["co-founder", "employee", "friend"],
+    current_role: "Linux Creator",
+    company: "Linux Foundation",
+    twitter_url: "https://twitter.com/linus_torvalds"
   }
 ];
 

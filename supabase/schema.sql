@@ -9,9 +9,15 @@ create table if not exists public.profiles (
   portfolio_url text,
   github_url text,
   city text,
+  skills text[],
+  looking_for text[],
+  current_role text,
+  company text,
+  twitter_url text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
 
 create table if not exists public.likes (
   id uuid primary key default gen_random_uuid(),
@@ -141,3 +147,124 @@ create policy "matched users can send messages"
       and (user_a_id = auth.uid() or user_b_id = auth.uid())
     )
   );
+
+-- Communities
+create table if not exists public.communities (
+  id uuid primary key default gen_random_uuid(),
+  creator_id uuid references public.profiles(id) on delete set null,
+  name text not null check (char_length(name) >= 3 and char_length(name) <= 50),
+  slug text unique not null check (char_length(slug) >= 3),
+  description text check (char_length(description) <= 500),
+  avatar_url text,
+  banner_url text,
+  created_at timestamptz default now()
+);
+
+-- Community membership
+create table if not exists public.community_members (
+  id uuid primary key default gen_random_uuid(),
+  community_id uuid references public.communities(id) on delete cascade not null,
+  profile_id uuid references public.profiles(id) on delete cascade not null,
+  role text default 'member' check (role in ('admin', 'moderator', 'member')),
+  created_at timestamptz default now(),
+  unique(community_id, profile_id)
+);
+
+-- Posts
+create table if not exists public.posts (
+  id uuid primary key default gen_random_uuid(),
+  author_id uuid references public.profiles(id) on delete cascade not null,
+  community_id uuid references public.communities(id) on delete cascade,
+  title text not null check (char_length(trim(title)) > 0),
+  content text not null check (char_length(trim(content)) > 0),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Comments
+create table if not exists public.comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid references public.posts(id) on delete cascade not null,
+  author_id uuid references public.profiles(id) on delete cascade not null,
+  content text not null check (char_length(trim(content)) > 0),
+  created_at timestamptz default now()
+);
+
+-- Events
+create table if not exists public.events (
+  id uuid primary key default gen_random_uuid(),
+  creator_id uuid references public.profiles(id) on delete cascade not null,
+  community_id uuid references public.communities(id) on delete cascade,
+  title text not null,
+  description text,
+  event_date timestamptz not null,
+  location_type text default 'online' check (location_type in ('online', 'in_person')),
+  location_details text,
+  created_at timestamptz default now()
+);
+
+-- Event RSVPs
+create table if not exists public.event_rsvps (
+  id uuid primary key default gen_random_uuid(),
+  event_id uuid references public.events(id) on delete cascade not null,
+  profile_id uuid references public.profiles(id) on delete cascade not null,
+  status text default 'going' check (status in ('going', 'maybe', 'not_going')),
+  created_at timestamptz default now(),
+  unique(event_id, profile_id)
+);
+
+-- Enable RLS
+alter table public.communities enable row level security;
+alter table public.community_members enable row level security;
+alter table public.posts enable row level security;
+alter table public.comments enable row level security;
+alter table public.events enable row level security;
+alter table public.event_rsvps enable row level security;
+
+-- Policies
+drop policy if exists "public communities are viewable" on public.communities;
+create policy "public communities are viewable" on public.communities for select using (true);
+drop policy if exists "authenticated users can create communities" on public.communities;
+create policy "authenticated users can create communities" on public.communities for insert with check (auth.uid() = creator_id);
+drop policy if exists "creators can update communities" on public.communities;
+create policy "creators can update communities" on public.communities for update using (auth.uid() = creator_id);
+
+drop policy if exists "community members are viewable" on public.community_members;
+create policy "community members are viewable" on public.community_members for select using (true);
+drop policy if exists "users can join communities" on public.community_members;
+create policy "users can join communities" on public.community_members for insert with check (auth.uid() = profile_id);
+drop policy if exists "users can leave communities" on public.community_members;
+create policy "users can leave communities" on public.community_members for delete using (auth.uid() = profile_id);
+
+drop policy if exists "public posts are viewable" on public.posts;
+create policy "public posts are viewable" on public.posts for select using (true);
+drop policy if exists "authenticated users can create posts" on public.posts;
+create policy "authenticated users can create posts" on public.posts for insert with check (auth.uid() = author_id);
+drop policy if exists "authors can update own posts" on public.posts;
+create policy "authors can update own posts" on public.posts for update using (auth.uid() = author_id);
+drop policy if exists "authors can delete own posts" on public.posts;
+create policy "authors can delete own posts" on public.posts for delete using (auth.uid() = author_id);
+
+drop policy if exists "public comments are viewable" on public.comments;
+create policy "public comments are viewable" on public.comments for select using (true);
+drop policy if exists "authenticated users can create comments" on public.comments;
+create policy "authenticated users can create comments" on public.comments for insert with check (auth.uid() = author_id);
+drop policy if exists "authors can update own comments" on public.comments;
+create policy "authors can update own comments" on public.comments for update using (auth.uid() = author_id);
+drop policy if exists "authors can delete own comments" on public.comments;
+create policy "authors can delete own comments" on public.comments for delete using (auth.uid() = author_id);
+
+drop policy if exists "public events are viewable" on public.events;
+create policy "public events are viewable" on public.events for select using (true);
+drop policy if exists "authenticated users can create events" on public.events;
+create policy "authenticated users can create events" on public.events for insert with check (auth.uid() = creator_id);
+
+drop policy if exists "event rsvps are viewable" on public.event_rsvps;
+create policy "event rsvps are viewable" on public.event_rsvps for select using (true);
+drop policy if exists "users can update own rsvp" on public.event_rsvps;
+create policy "users can update own rsvp" on public.event_rsvps for insert with check (auth.uid() = profile_id);
+drop policy if exists "users can change own rsvp" on public.event_rsvps;
+create policy "users can change own rsvp" on public.event_rsvps for update using (auth.uid() = profile_id);
+drop policy if exists "users can delete own rsvp" on public.event_rsvps;
+create policy "users can delete own rsvp" on public.event_rsvps for delete using (auth.uid() = profile_id);
+

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Github, Link as LinkIcon, MapPin } from "lucide-react";
+import { Github, Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { hasSupabaseConfig } from "@/lib/env";
 import { mockProfiles } from "@/lib/mock-data";
@@ -53,16 +53,59 @@ export default async function ProfilePage() {
           <h2 className="mt-8 text-4xl font-black tracking-[-0.03em]">
             {profile.full_name || profile.username}
           </h2>
-          <p className="mt-2 font-mono text-sm text-gray-600">@{profile.username}</p>
+          {(profile.current_role || profile.company) && (
+            <p className="mt-2 font-mono text-sm text-gray-800 font-bold">
+              {profile.current_role}
+              {profile.current_role && profile.company && " @ "}
+              {profile.company}
+            </p>
+          )}
+          <p className="mt-1 font-mono text-xs text-gray-500">@{profile.username}</p>
 
           {profile.bio ? (
-            <p className="mt-8 border-t border-gray-200 pt-8 font-mono text-sm leading-7">
+            <p className="mt-6 border-t border-gray-200 pt-6 font-mono text-sm leading-7">
               {profile.bio}
             </p>
           ) : (
-            <p className="mt-8 border-t border-gray-200 pt-8 font-mono text-sm text-gray-600">
+            <p className="mt-6 border-t border-gray-200 pt-6 font-mono text-sm text-gray-600">
               no bio yet.
             </p>
+          )}
+
+          {profile.looking_for && profile.looking_for.length > 0 && (
+            <div className="mt-6 border-t border-gray-200 pt-6">
+              <span className="font-sans text-xs font-bold uppercase tracking-[0.1em] text-gray-500">
+                looking for
+              </span>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {profile.looking_for.map((item) => (
+                  <span
+                    key={item}
+                    className="border border-black bg-black text-white px-3 py-1 font-mono text-xs uppercase"
+                  >
+                    {item.replace("-", " ")}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {profile.skills && profile.skills.length > 0 && (
+            <div className="mt-6 border-t border-gray-200 pt-6">
+              <span className="font-sans text-xs font-bold uppercase tracking-[0.1em] text-gray-500">
+                skills
+              </span>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {profile.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="border border-black bg-gray-100 px-3 py-1 font-mono text-xs text-black"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
 
           <div className="mt-8 grid gap-4 border-t border-gray-200 pt-8 font-mono text-sm">
@@ -88,6 +131,17 @@ export default async function ProfilePage() {
               >
                 <LinkIcon aria-hidden className="h-4 w-4" strokeWidth={1.5} />
                 Portfolio
+              </a>
+            ) : null}
+            {profile.twitter_url ? (
+              <a
+                href={profile.twitter_url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3"
+              >
+                <Twitter aria-hidden className="h-4 w-4" strokeWidth={1.5} />
+                Twitter / X
               </a>
             ) : null}
           </div>

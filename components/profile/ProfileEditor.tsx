@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import { hasSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/client";
+import { mockProfiles } from "@/lib/mock-data";
 import type { Profile } from "@/lib/types";
 
 const fallbackProfile: Profile = {
@@ -16,11 +17,21 @@ const fallbackProfile: Profile = {
   bio: "",
   portfolio_url: "",
   github_url: "https://github.com/your-github",
-  city: ""
+  city: "",
+  skills: [],
+  looking_for: [],
+  current_role: "",
+  company: "",
+  twitter_url: ""
 };
 
 export function ProfileEditor() {
-  const [profile, setProfile] = useState<Profile>(fallbackProfile);
+  const [profile, setProfile] = useState<Profile>(
+    hasSupabaseConfig() ? fallbackProfile : mockProfiles[0]
+  );
+  const [skillsInput, setSkillsInput] = useState(
+    hasSupabaseConfig() ? "" : (mockProfiles[0].skills ?? []).join(", ")
+  );
   const [saved, setSaved] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
@@ -54,14 +65,16 @@ export function ProfileEditor() {
 
       if (error?.code === "PGRST205") {
         setStatus("Supabase is missing public.profiles. Run supabase/schema.sql in the SQL editor.");
-        setProfile({
+        const localProf = {
           ...fallbackProfile,
           id: user.id,
           username,
           full_name: user.user_metadata.full_name ?? "",
           avatar_url: user.user_metadata.avatar_url ?? "",
           github_url: `https://github.com/${username}`
-        });
+        };
+        setProfile(localProf);
+        setSkillsInput((localProf.skills ?? []).join(", "));
         return;
       }
 
@@ -69,16 +82,16 @@ export function ProfileEditor() {
         setStatus(error.message);
       }
 
-      setProfile(
-        data ?? {
-          ...fallbackProfile,
-          id: user.id,
-          username,
-          full_name: user.user_metadata.full_name ?? "",
-          avatar_url: user.user_metadata.avatar_url ?? "",
-          github_url: `https://github.com/${username}`
-        }
-      );
+      const loadedProfile = data ?? {
+        ...fallbackProfile,
+        id: user.id,
+        username,
+        full_name: user.user_metadata.full_name ?? "",
+        avatar_url: user.user_metadata.avatar_url ?? "",
+        github_url: `https://github.com/${username}`
+      };
+      setProfile(loadedProfile);
+      setSkillsInput((loadedProfile.skills ?? []).join(", "));
     }
 
     void loadProfile();
@@ -126,6 +139,11 @@ export function ProfileEditor() {
         city: profile.city,
         avatar_url: profile.avatar_url,
         github_url: profile.github_url || `https://github.com/${username}`,
+        skills: profile.skills,
+        looking_for: profile.looking_for,
+        current_role: profile.current_role,
+        company: profile.company,
+        twitter_url: profile.twitter_url,
         updated_at: new Date().toISOString()
       });
 
@@ -164,6 +182,18 @@ export function ProfileEditor() {
           value={profile.full_name ?? ""}
           onChange={(event) => update("full_name", event.target.value)}
         />
+        <Input
+          label="current role"
+          value={profile.current_role ?? ""}
+          placeholder="e.g. Senior Backend Engineer"
+          onChange={(event) => update("current_role", event.target.value)}
+        />
+        <Input
+          label="company"
+          value={profile.company ?? ""}
+          placeholder="e.g. Acme Corp"
+          onChange={(event) => update("company", event.target.value)}
+        />
         <label className="block">
           <Textarea
             label="bio"
@@ -175,10 +205,77 @@ export function ProfileEditor() {
             {(profile.bio ?? "").length}/300
           </span>
         </label>
+        <div className="block">
+          <span className="mb-2 block font-sans text-xs font-bold uppercase tracking-[0.1em]">
+            looking for
+          </span>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {[
+              { id: "co-founder", label: "Co-Founder" },
+              { id: "employee", label: "Employee" },
+              { id: "employer", label: "Employer" },
+              { id: "friend", label: "Friend" }
+            ].map((option) => {
+              const isSelected = (profile.looking_for ?? []).includes(option.id);
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => {
+                    const current = profile.looking_for ?? [];
+                    const updated = isSelected
+                      ? current.filter((x) => x !== option.id)
+                      : [...current, option.id];
+                    update("looking_for", updated);
+                  }}
+                  className={`border border-black px-4 py-2 font-mono text-xs transition-colors duration-150 ${
+                    isSelected ? "bg-black text-white" : "bg-white text-black hover:bg-gray-100"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="block">
+          <Input
+            label="skills (comma separated)"
+            placeholder="e.g. Rust, TypeScript, PostgreSQL"
+            value={skillsInput}
+            onChange={(event) => {
+              const val = event.target.value;
+              setSkillsInput(val);
+              const parsed = val
+                .split(",")
+                .map((x) => x.trim())
+                .filter(Boolean);
+              update("skills", parsed);
+            }}
+          />
+          {profile.skills && profile.skills.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3">
+              {profile.skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="border border-black bg-gray-100 px-3 py-1 font-mono text-xs text-black"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
         <Input
           label="portfolio url"
           value={profile.portfolio_url ?? ""}
           onChange={(event) => update("portfolio_url", event.target.value)}
+        />
+        <Input
+          label="twitter url"
+          value={profile.twitter_url ?? ""}
+          placeholder="e.g. https://twitter.com/handle"
+          onChange={(event) => update("twitter_url", event.target.value)}
         />
         <Input
           label="city"
