@@ -1,4 +1,4 @@
-import type { Match, Message, Profile, Community, Post, Comment } from "@/lib/types";
+import type { Match, Message, Profile, Community, Post, Comment, Event } from "@/lib/types";
 
 export const mockProfiles: Profile[] = [
   {

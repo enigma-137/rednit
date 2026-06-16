@@ -94,6 +94,12 @@ export default function FeedPage() {
             >
               All Communities
             </Link>
+            <Link
+              href="/events"
+              className="mt-2 block border border-black bg-black text-white py-2 text-center font-mono text-[10px] uppercase font-bold hover:bg-white hover:text-black transition-colors"
+            >
+              Upcoming Meetups
+            </Link>
           </div>
 
           {/* Quick instructions widget */}

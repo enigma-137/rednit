@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Calendar, MapPin, Video, CheckCircle, QuestionMarkCircle } from "lucide-react";
+import { Calendar, MapPin, Video, CheckCircle } from "lucide-react";
 import { useEvents } from "@/lib/hooks/useEvents";
 import type { Event } from "@/lib/types";
 
