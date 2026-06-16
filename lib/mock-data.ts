@@ -1,4 +1,4 @@
-import type { Match, Message, Profile, Community } from "@/lib/types";
+import type { Match, Message, Profile, Community, Post, Comment } from "@/lib/types";
 
 export const mockProfiles: Profile[] = [
   {
@@ -106,3 +106,46 @@ export const mockCommunities: Community[] = [
     created_at: new Date().toISOString()
   }
 ];
+
+export const mockPosts: Post[] = [
+  {
+    id: "post-1",
+    author_id: mockProfiles[0].id,
+    community_id: "comm-2",
+    title: "Understanding Server Actions in Next.js 14/15",
+    content: "Server Actions are asynchronous functions that are executed on the server. They can be defined inside Server Components or Client Components to handle form submissions and data mutations. What are your thoughts on using them instead of standard route handlers?",
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    author: mockProfiles[0]
+  },
+  {
+    id: "post-2",
+    author_id: mockProfiles[2].id,
+    community_id: "comm-1",
+    title: "Why Rust is perfect for systems programming",
+    content: "Rust provides memory safety without garbage collection through its ownership, borrowing, and lifetime checks. It enables developers to write highly performant, bare-metal operations with high-level developer ergonomics. Who is building a production API in Axum?",
+    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    author: mockProfiles[2]
+  }
+];
+
+export const mockComments: Comment[] = [
+  {
+    id: "comm-comment-1",
+    post_id: "post-1",
+    author_id: mockProfiles[1].id,
+    content: "I personally love Server Actions! The type safety you get when passing form data directly to servers is unmatched. No more manual API endpoint orchestration.",
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+    author: mockProfiles[1]
+  },
+  {
+    id: "comm-comment-2",
+    post_id: "post-2",
+    author_id: mockProfiles[0].id,
+    content: "Axum is incredibly clean. The router design and extraction system feels very modular. We run a microservice in production with Axum and resource consumption is close to zero.",
+    created_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+    author: mockProfiles[0]
+  }
+];
+
