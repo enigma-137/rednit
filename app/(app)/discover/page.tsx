@@ -50,7 +50,7 @@ export default function DiscoverPage() {
         <div className="mx-auto w-full max-w-[420px] px-3 pt-6 shrink-0">
           <div className="border border-black bg-gray-50 p-4 font-mono text-xs text-black space-y-3">
             <div className="font-bold uppercase tracking-wider text-black">
-              ⚡ Profile Incomplete
+              Profile Incomplete
             </div>
             <p className="leading-5">
               Add your role, skills, and goals so other collaborators can find and connect with you.
@@ -70,9 +70,8 @@ export default function DiscoverPage() {
         <span className="font-mono text-xs uppercase text-gray-500">Discover Developers</span>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex h-8 w-8 items-center justify-center border border-black transition-colors ${
-            showFilters ? "bg-black text-white" : "bg-white text-black hover:bg-gray-100"
-          }`}
+          className={`flex h-8 w-8 items-center justify-center border border-black transition-colors ${showFilters ? "bg-black text-white" : "bg-white text-black hover:bg-gray-100"
+            }`}
           aria-label="Toggle Filters"
         >
           <SlidersHorizontal className="h-4 w-4" strokeWidth={1.5} />
@@ -162,13 +161,13 @@ export default function DiscoverPage() {
           </button>
         </div>
       ) : null}
-      
+
       <AnimatePresence>
-        <MatchModal 
-          profile={matchData?.profile ?? null} 
+        <MatchModal
+          profile={matchData?.profile ?? null}
           currentUser={currentUserProfile}
           matchId={matchData?.matchId ?? null}
-          onClose={() => setMatchData(null)} 
+          onClose={() => setMatchData(null)}
         />
       </AnimatePresence>
     </div>
