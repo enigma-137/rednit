@@ -7,12 +7,15 @@ import { ArrowLeft, Users, Shield, LogOut, Check, ArrowRight } from "lucide-reac
 import { Button } from "@/components/ui/Button";
 import { useCommunities } from "@/lib/hooks/useCommunities";
 import { useFeed } from "@/lib/hooks/useFeed";
+import { useEvents } from "@/lib/hooks/useEvents";
 import { PostComposer } from "@/components/posts/PostComposer";
 import { PostCard } from "@/components/posts/PostCard";
+import { EventScheduler } from "@/components/events/EventScheduler";
+import { EventCard } from "@/components/events/EventCard";
 import { createClient } from "@/lib/supabase/client";
 import { hasSupabaseConfig } from "@/lib/env";
 import { mockProfiles } from "@/lib/mock-data";
-import type { Community, Profile, Post } from "@/lib/types";
+import type { Community, Profile, Post, Event } from "@/lib/types";
 
 export default function CommunityDashboardPage() {
   const params = useParams();
@@ -28,6 +31,7 @@ export default function CommunityDashboardPage() {
   } = useCommunities();
 
   const { posts, loading: feedLoading, loadPosts } = useFeed();
+  const { events: communityEvents, loading: eventsLoading, loadEvents } = useEvents();
 
   const [community, setCommunity] = useState<Community | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +41,8 @@ export default function CommunityDashboardPage() {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [localPosts, setLocalPosts] = useState<Post[]>([]);
+  const [localEvents, setLocalEvents] = useState<Event[]>([]);
+  const [activeTab, setActiveTab] = useState<"feed" | "meetups">("feed");
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -58,6 +64,9 @@ export default function CommunityDashboardPage() {
 
     // Fetch feed posts for this community
     void loadPosts(comm.id);
+
+    // Fetch meetups for this community
+    void loadEvents(comm.id);
 
     // Fetch members profile roster
     setLoadingMembers(true);
@@ -87,7 +96,7 @@ export default function CommunityDashboardPage() {
       }
     }
     setLoadingMembers(false);
-  }, [slug, loadCommunityBySlug, checkIsMember, getMemberCount, loadPosts]);
+  }, [slug, loadCommunityBySlug, checkIsMember, getMemberCount, loadPosts, loadEvents]);
 
   useEffect(() => {
     void loadData();
@@ -97,8 +106,20 @@ export default function CommunityDashboardPage() {
     setLocalPosts(posts);
   }, [posts]);
 
+  useEffect(() => {
+    setLocalEvents(communityEvents);
+  }, [communityEvents]);
+
   function handlePostCreated(newPost: Post) {
     setLocalPosts((curr) => [newPost, ...curr]);
+  }
+
+  function handleEventCreated(newEvent: Event) {
+    setLocalEvents((curr) => {
+      const updated = [newEvent, ...curr];
+      updated.sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime());
+      return updated;
+    });
   }
 
   async function handleToggleMembership() {
@@ -210,32 +231,78 @@ export default function CommunityDashboardPage() {
 
       {/* Main Grid: Discussions Feed & Members Roster */}
       <div className="grid gap-8 mt-8 lg:grid-cols-[1fr_280px]">
-        {/* Left Column: Feed discussions list */}
+        {/* Left Column: Feed / Meetups Tabbed Views */}
         <section className="space-y-6">
-          <h2 className="text-xl font-bold tracking-tight border-b border-black pb-2">
-            discussions feed
-          </h2>
-          {isMember ? (
-            <PostComposer communityId={community.id} onPostCreated={handlePostCreated} />
-          ) : (
-            <div className="border border-dashed border-gray-300 p-4 text-center font-mono text-xs text-gray-500 bg-gray-50">
-              Only members of this community can write posts. Join this family to write!
-            </div>
-          )}
+          <div className="flex gap-6 border-b border-black pb-2">
+            <button
+              onClick={() => setActiveTab("feed")}
+              className={`font-sans text-sm font-bold uppercase tracking-[0.15em] pb-1 border-b-2 transition-all ${
+                activeTab === "feed" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-black"
+              }`}
+            >
+              Discussions Feed
+            </button>
+            <button
+              onClick={() => setActiveTab("meetups")}
+              className={`font-sans text-sm font-bold uppercase tracking-[0.15em] pb-1 border-b-2 transition-all ${
+                activeTab === "meetups" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-black"
+              }`}
+            >
+              Upcoming Meetups
+            </button>
+          </div>
 
-          {feedLoading ? (
-            <div className="py-12 text-center font-mono text-xs text-gray-400">
-              loading feed posts...
-            </div>
-          ) : localPosts.length === 0 ? (
-            <div className="py-16 border border-dashed border-gray-200 text-center font-mono text-xs text-gray-500">
-              No discussions yet. Write the first update inside {community.name}!
+          {activeTab === "feed" ? (
+            <div className="space-y-6">
+              {isMember ? (
+                <PostComposer communityId={community.id} onPostCreated={handlePostCreated} />
+              ) : (
+                <div className="border border-dashed border-gray-300 p-4 text-center font-mono text-xs text-gray-500 bg-gray-50">
+                  Only members of this community can write posts. Join this family to write!
+                </div>
+              )}
+
+              {feedLoading ? (
+                <div className="py-12 text-center font-mono text-xs text-gray-400">
+                  loading feed posts...
+                </div>
+              ) : localPosts.length === 0 ? (
+                <div className="py-16 border border-dashed border-gray-200 text-center font-mono text-xs text-gray-500">
+                  No discussions yet. Write the first update inside {community.name}!
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {localPosts.map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
-            <div className="space-y-5">
-              {localPosts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
+            <div className="space-y-6">
+              {isMember ? (
+                <EventScheduler communityId={community.id} onEventCreated={handleEventCreated} />
+              ) : (
+                <div className="border border-dashed border-gray-300 p-4 text-center font-mono text-xs text-gray-500 bg-gray-50">
+                  Only members of this community can schedule meetups. Join this family to start!
+                </div>
+              )}
+
+              {eventsLoading ? (
+                <div className="py-12 text-center font-mono text-xs text-gray-400">
+                  loading community meetups...
+                </div>
+              ) : localEvents.length === 0 ? (
+                <div className="py-16 border border-dashed border-gray-200 text-center font-mono text-xs text-gray-500">
+                  No meetups scheduled. Set one up above to rally this community!
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {localEvents.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </section>

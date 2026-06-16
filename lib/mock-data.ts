@@ -149,3 +149,28 @@ export const mockComments: Comment[] = [
   }
 ];
 
+export const mockEvents: Event[] = [
+  {
+    id: "event-1",
+    creator_id: mockProfiles[2].id,
+    community_id: "comm-1",
+    title: "Rust Memory Safety Deep Dive",
+    description: "An interactive code review on smart pointers (Box, Rc, Arc) and interior mutability pattern (RefCell, Mutex). Bring your laptop and your trickiest borrow checker questions!",
+    event_date: new Date(Date.now() + 3600000 * 24 * 3).toISOString(),
+    location_type: "online",
+    location_details: "https://zoom.us/j/rust-family-meetup",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "event-2",
+    creator_id: mockProfiles[0].id,
+    community_id: "comm-2",
+    title: "RSC & Next.js Performance Optimization",
+    description: "Coffee chat to talk about server component boundaries, layout structures, streaming HTML rendering, hydration, and browser caching.",
+    event_date: new Date(Date.now() + 3600000 * 24 * 7).toISOString(),
+    location_type: "in_person",
+    location_details: "Acme Coffee House, 4th Floor Meeting Room, Lagos",
+    created_at: new Date().toISOString()
+  }
+];
+
