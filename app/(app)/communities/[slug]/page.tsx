@@ -170,7 +170,7 @@ export default function CommunityDashboardPage() {
           <Button
             onClick={handleToggleMembership}
             disabled={actionLoading}
-            variant={isMember ? "outline" : "default"}
+            variant={isMember ? "outline" : "solid"}
             className="flex items-center justify-center gap-2 font-mono text-xs uppercase tracking-wider shrink-0 h-11 px-6 sm:self-start"
           >
             {isMember ? (

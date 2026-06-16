@@ -1,4 +1,4 @@
-import type { Match, Message, Profile } from "@/lib/types";
+import type { Match, Message, Profile, Community } from "@/lib/types";
 
 export const mockProfiles: Profile[] = [
   {
@@ -84,7 +84,7 @@ export const mockMatches: Match[] = [
   }
 ];
 
-export const mockCommunities = [
+export const mockCommunities: Community[] = [
   {
     id: "comm-1",
     creator_id: mockProfiles[2].id,
