@@ -83,3 +83,26 @@ export const mockMatches: Match[] = [
     last_message: null
   }
 ];
+
+export const mockCommunities = [
+  {
+    id: "comm-1",
+    creator_id: mockProfiles[2].id,
+    name: "Rust Family",
+    slug: "rust-family",
+    description: "A cozy community for Rustaceans. Memory safety, speed, and clean code macros.",
+    avatar_url: "",
+    banner_url: "",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "comm-2",
+    creator_id: mockProfiles[0].id,
+    name: "Next.js Pioneers",
+    slug: "nextjs-pioneers",
+    description: "Front-end engineering group building fast web apps with React Server Components.",
+    avatar_url: "",
+    banner_url: "",
+    created_at: new Date().toISOString()
+  }
+];
