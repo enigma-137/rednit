@@ -84,22 +84,22 @@ export default function HomePage() {
     return () => window.clearInterval(interval);
   }, []);
 
-  // async function signInWithGithub() {
-  //   if (!hasSupabaseConfig()) {
-  //     window.location.href = "/discover";
-  //     return;
-  //   }
+  async function signInWithGithub() {
+    if (!hasSupabaseConfig()) {
+      window.location.href = "/discover";
+      return;
+    }
 
-  //   const supabase = createClient();
-  //   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
+    const supabase = createClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
 
-  //   await supabase.auth.signInWithOAuth({
-  //     provider: "github",
-  //     options: {
-  //       redirectTo: `${siteUrl}/api/auth/callback`
-  //     }
-  //   });
-  // }
+    await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: `${siteUrl}/api/auth/callback`
+      }
+    });
+  }
 
   return (
     <main className="min-h-screen bg-white text-black">
@@ -119,10 +119,8 @@ export default function HomePage() {
               GitHub
             </a>
             <button
-              disabled
-              title="Login disabled — we're building"
-              className="font-sans text-xs font-bold uppercase tracking-[0.1em] disabled:cursor-not-allowed disabled:opacity-40"
-              aria-disabled="true"
+              onClick={signInWithGithub}
+              className="font-sans text-xs font-bold uppercase tracking-[0.1em] hover:underline"
             >
               Login
             </button>
@@ -143,9 +141,7 @@ export default function HomePage() {
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Button
-                disabled
-                title="Sign in disabled — we're building"
-                aria-disabled="true"
+                onClick={signInWithGithub}
                 className="gap-3"
               >
                 <Github aria-hidden className="h-4 w-4" strokeWidth={1.75} />
