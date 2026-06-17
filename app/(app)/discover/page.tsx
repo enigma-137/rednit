@@ -45,7 +45,6 @@ export default function DiscoverPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-start pb-8">
-      {/* Profile Incomplete Warning Banner */}
       {isProfileIncomplete && (
         <div className="mx-auto w-full max-w-[420px] px-3 pt-6 shrink-0">
           <div className="border border-black bg-gray-50 p-4 font-mono text-xs text-black space-y-3">
@@ -64,8 +63,6 @@ export default function DiscoverPage() {
           </div>
         </div>
       )}
-
-      {/* Filter Header and Icon button */}
       <div className="mx-auto w-full max-w-[420px] px-3 pt-6 flex justify-between items-center shrink-0">
         <span className="font-mono text-xs uppercase text-gray-500">Discover Developers</span>
         <button
@@ -77,8 +74,6 @@ export default function DiscoverPage() {
           <SlidersHorizontal className="h-4 w-4" strokeWidth={1.5} />
         </button>
       </div>
-
-      {/* Collapsible Filter Panel */}
       {showFilters && (
         <div className="mx-auto w-full max-w-[420px] px-3 pt-3 shrink-0">
           <div className="flex flex-col gap-3 border border-black p-4 bg-white">
