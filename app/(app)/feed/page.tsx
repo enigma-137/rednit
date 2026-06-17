@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MessageSquare, Users, Sparkles, ChevronRight } from "lucide-react";
+import { Users, ChevronRight } from "lucide-react";
 import { useFeed } from "@/lib/hooks/useFeed";
 import { useCommunities } from "@/lib/hooks/useCommunities";
 import { PostComposer } from "@/components/posts/PostComposer";
@@ -36,9 +36,7 @@ export default function FeedPage() {
         </p>
       </header>
 
-      {/* Main Grid: Feed stream & Sidebar */}
       <div className="grid gap-8 mt-8 lg:grid-cols-[1fr_300px]">
-        {/* Left Column: PostComposer & Stream */}
         <section className="space-y-6">
           <PostComposer onPostCreated={handlePostCreated} />
 
@@ -59,7 +57,6 @@ export default function FeedPage() {
           )}
         </section>
 
-        {/* Right Column: Active Communities Sidebar */}
         <aside className="space-y-6">
           <div className="border border-black p-5 bg-white">
             <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-tight border-b border-black pb-2">
@@ -102,10 +99,9 @@ export default function FeedPage() {
             </Link>
           </div>
 
-          {/* Quick instructions widget */}
           <div className="border border-black p-5 bg-gray-50 font-mono text-[10px] text-gray-600 leading-5">
             <h4 className="font-bold text-black uppercase flex items-center gap-1.5 border-b border-gray-200 pb-1.5 mb-2">
-              <Sparkles className="h-3.5 w-3.5" />
+              {/* <Sparkles className="h-3.5 w-3.5" /> */}
               Guidelines
             </h4>
             <p>1. Be constructive when reviewing other developers project architectures.</p>
