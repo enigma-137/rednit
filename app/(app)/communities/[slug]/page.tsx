@@ -12,6 +12,7 @@ import { PostComposer } from "@/components/posts/PostComposer";
 import { PostCard } from "@/components/posts/PostCard";
 import { EventScheduler } from "@/components/events/EventScheduler";
 import { EventCard } from "@/components/events/EventCard";
+import { ConnectButton } from "@/components/ui/ConnectButton";
 import { createClient } from "@/lib/supabase/client";
 import { hasSupabaseConfig } from "@/lib/env";
 import { mockProfiles } from "@/lib/mock-data";
@@ -336,7 +337,7 @@ export default function CommunityDashboardPage() {
                       </div>
                     )}
                   </div>
-                  <div className="min-w-0">
+                  <div className="flex-1 min-w-0">
                     <p className="truncate text-xs font-bold leading-tight">
                       {member.full_name || member.username}
                     </p>
@@ -344,6 +345,7 @@ export default function CommunityDashboardPage() {
                       @{member.username}
                     </p>
                   </div>
+                  <ConnectButton targetUserId={member.id} />
                 </div>
               ))}
             </div>

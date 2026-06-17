@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { MessageSquare, Send, CornerDownRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useFeed } from "@/lib/hooks/useFeed";
+import { ConnectButton } from "@/components/ui/ConnectButton";
 import type { Post, Comment } from "@/lib/types";
 
 type PostCardProps = {
@@ -77,13 +78,14 @@ export function PostCard({ post }: PostCardProps) {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="text-xs font-bold leading-none">
               {post.author?.full_name || post.author?.username || "Developer"}
             </span>
             <span className="font-mono text-[10px] text-gray-500">
               @{post.author?.username || "unknown"}
             </span>
+            <ConnectButton targetUserId={post.author_id} />
           </div>
           {post.author?.role_title && (
             <p className="mt-0.5 font-mono text-[10px] text-gray-700 truncate">
