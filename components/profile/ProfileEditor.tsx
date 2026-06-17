@@ -36,7 +36,15 @@ export function ProfileEditor() {
   const [status, setStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!hasSupabaseConfig()) return;
+    if (!hasSupabaseConfig()) {
+      const savedProfile = localStorage.getItem("rednit_mock_profile");
+      if (savedProfile) {
+        const parsed = JSON.parse(savedProfile);
+        setProfile(parsed);
+        setSkillsInput((parsed.skills ?? []).join(", "));
+      }
+      return;
+    }
 
     const supabase = createClient();
 
@@ -106,6 +114,7 @@ export function ProfileEditor() {
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!hasSupabaseConfig()) {
+      localStorage.setItem("rednit_mock_profile", JSON.stringify(profile));
       setSaved(true);
       return;
     }

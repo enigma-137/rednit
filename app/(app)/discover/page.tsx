@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { SlidersHorizontal } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { MatchModal } from "@/components/match/MatchModal";
@@ -35,34 +34,8 @@ export default function DiscoverPage() {
     return true;
   });
 
-  const isProfileIncomplete =
-    currentUserProfile &&
-    (!currentUserProfile.role_title ||
-      !currentUserProfile.skills ||
-      currentUserProfile.skills.length === 0 ||
-      !currentUserProfile.looking_for ||
-      currentUserProfile.looking_for.length === 0);
-
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-start pb-8">
-      {isProfileIncomplete && (
-        <div className="mx-auto w-full max-w-[420px] px-3 pt-6 shrink-0">
-          <div className="border border-black bg-gray-50 p-4 font-mono text-xs text-black space-y-3">
-            <div className="font-bold uppercase tracking-wider text-black">
-              Profile Incomplete
-            </div>
-            <p className="leading-5">
-              Add your role, skills, and goals so other collaborators can find and connect with you.
-            </p>
-            <Link
-              href="/profile/edit"
-              className="inline-block border border-black bg-black text-white px-3 py-1.5 font-sans text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-colors"
-            >
-              Update Profile
-            </Link>
-          </div>
-        </div>
-      )}
       <div className="mx-auto w-full max-w-[420px] px-3 pt-6 flex justify-between items-center shrink-0">
         <span className="font-mono text-xs uppercase text-gray-500">Discover Developers</span>
         <button
@@ -75,43 +48,40 @@ export default function DiscoverPage() {
         </button>
       </div>
       {showFilters && (
-        <div className="mx-auto w-full max-w-[420px] px-3 pt-3 shrink-0">
-          <div className="flex flex-col gap-3 border border-black p-4 bg-white">
-            <div className="flex items-center justify-between border-b border-black pb-2">
-              <span className="font-mono text-xs font-bold uppercase">filters</span>
-              {(searchSkill || selectedRole) && (
-                <button
-                  onClick={() => {
-                    setSearchSkill("");
-                    setSelectedRole("");
-                  }}
-                  className="font-mono text-[10px] uppercase hover:underline"
-                >
-                  clear
-                </button>
-              )}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-[380px] border-2 border-black bg-white p-5 font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
+              <span className="text-xs font-bold uppercase tracking-wider">Search & Filters</span>
+              <button
+                onClick={() => setShowFilters(false)}
+                className="border border-black bg-white hover:bg-black hover:text-white px-2 py-0.5 text-[10px] uppercase font-bold transition-colors"
+              >
+                Close
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            
+            <div className="space-y-4">
               <div>
-                <label className="block font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-gray-500 mb-1">
+                <label className="block font-sans text-[9px] font-bold uppercase tracking-[0.1em] text-gray-500 mb-1">
                   skill search
                 </label>
                 <input
                   type="text"
                   value={searchSkill}
                   onChange={(e) => setSearchSkill(e.target.value)}
-                  placeholder="e.g. Rust"
-                  className="w-full border border-black bg-white px-2 py-1.5 font-mono text-xs outline-none placeholder:text-gray-400"
+                  placeholder="e.g. Rust, TypeScript"
+                  className="w-full border border-black bg-white px-2 py-1.5 text-xs outline-none placeholder:text-gray-400"
                 />
               </div>
+
               <div>
-                <label className="block font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-gray-500 mb-1">
-                  looking for
+                <label className="block font-sans text-[9px] font-bold uppercase tracking-[0.1em] text-gray-500 mb-1">
+                  looking for role
                 </label>
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value)}
-                  className="w-full border border-black bg-white px-2 py-1.5 font-mono text-xs outline-none"
+                  className="w-full border border-black bg-white px-2 py-1.5 text-xs outline-none"
                 >
                   <option value="">all roles</option>
                   <option value="co-founder">co-founder</option>
@@ -119,6 +89,28 @@ export default function DiscoverPage() {
                   <option value="employer">employer</option>
                   <option value="friend">friend</option>
                 </select>
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                {(searchSkill || selectedRole) ? (
+                  <button
+                    onClick={() => {
+                      setSearchSkill("");
+                      setSelectedRole("");
+                    }}
+                    className="text-[10px] uppercase text-gray-500 hover:text-black hover:underline"
+                  >
+                    Clear Filters
+                  </button>
+                ) : (
+                  <div />
+                )}
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="border border-black bg-black text-white hover:bg-white hover:text-black px-4 py-1.5 text-xs uppercase font-bold transition-colors duration-150"
+                >
+                  Apply
+                </button>
               </div>
             </div>
           </div>
