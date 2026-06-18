@@ -131,6 +131,9 @@ export function SwipeCard({
                   {skill}
                 </span>
               ))}
+            </div>
+          )}
+
           <div className="mt-3 shrink-0">
             <GitHubStats username={profile.username} />
           </div>
