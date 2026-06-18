@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { Github, Link as LinkIcon } from "lucide-react";
+import { GitHubStats } from "@/components/profile/GitHubStats";
 import type { Profile } from "@/lib/types";
 
 type SwipeCardProps = {
@@ -130,8 +131,9 @@ export function SwipeCard({
                   {skill}
                 </span>
               ))}
-            </div>
-          )}
+          <div className="mt-3 shrink-0">
+            <GitHubStats username={profile.username} />
+          </div>
 
           <div className="mt-auto min-w-0 shrink-0 space-y-1.5 border-t border-gray-200 pt-3 font-mono text-xs">
             <a
