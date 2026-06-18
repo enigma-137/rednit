@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { MessageSquare, Send, CornerDownRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { useFeed } from "@/lib/hooks/useFeed";
+import { useFeed, containsLink } from "@/lib/hooks/useFeed";
 import { ConnectButton } from "@/components/ui/ConnectButton";
 import type { Post, Comment } from "@/lib/types";
 
@@ -18,6 +18,7 @@ export function PostCard({ post }: PostCardProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
   const [commentContent, setCommentContent] = useState("");
+  const [commentError, setCommentError] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
 
   const loadCommentsList = useCallback(async () => {
@@ -35,13 +36,21 @@ export function PostCard({ post }: PostCardProps) {
 
   async function handleAddComment(e: React.FormEvent) {
     e.preventDefault();
+    setCommentError("");
     if (!commentContent.trim() || submittingComment) return;
+
+    if (containsLink(commentContent)) {
+      setCommentError("For security, external links are not allowed in comments.");
+      return;
+    }
 
     setSubmittingComment(true);
     const added = await createComment(post.id, commentContent.trim());
     if (added) {
       setComments((curr) => [...curr, added]);
       setCommentContent("");
+    } else {
+      setCommentError("Failed to publish comment.");
     }
     setSubmittingComment(false);
   }
@@ -101,8 +110,10 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Post body */}
       <main className="mt-4">
-        <h3 className="text-base font-bold tracking-tight">{post.title}</h3>
-        <p className="mt-2 font-mono text-xs text-gray-800 leading-5 whitespace-pre-wrap">
+        {post.title && (
+          <h3 className="text-base font-bold tracking-tight mb-2">{post.title}</h3>
+        )}
+        <p className="font-mono text-xs text-gray-800 leading-5 whitespace-pre-wrap">
           {post.content}
         </p>
       </main>
@@ -147,12 +158,21 @@ export function PostCard({ post }: PostCardProps) {
               </div>
             )}
 
+            {commentError && (
+              <div className="border border-black bg-red-50 p-2 font-mono text-[10px] text-red-600">
+                {commentError}
+              </div>
+            )}
+
             {/* Comment Composer form */}
             <form onSubmit={handleAddComment} className="flex gap-2 pt-2 items-center">
               <input
                 type="text"
                 value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
+                onChange={(e) => {
+                  setCommentContent(e.target.value);
+                  setCommentError("");
+                }}
                 placeholder="Type a helpful comment..."
                 required
                 className="flex-1 border border-black bg-white px-3 py-2 font-mono text-xs outline-none placeholder:text-gray-400"

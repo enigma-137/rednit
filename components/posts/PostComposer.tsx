@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
-import { useFeed } from "@/lib/hooks/useFeed";
+import { useFeed, containsLink } from "@/lib/hooks/useFeed";
 import type { Post } from "@/lib/types";
 
 type PostComposerProps = {
@@ -24,13 +24,18 @@ export function PostComposer({ communityId = null, onPostCreated }: PostComposer
     e.preventDefault();
     setError("");
 
-    if (!title.trim() || !content.trim()) {
-      setError("Title and content are required.");
+    if (!content.trim()) {
+      setError("Post content is required.");
+      return;
+    }
+
+    if (containsLink(title) || containsLink(content)) {
+      setError("For security, external links are not allowed in posts.");
       return;
     }
 
     setSubmitting(true);
-    const created = await createPost(title.trim(), content.trim(), communityId);
+    const created = await createPost(title.trim() || null, content.trim(), communityId);
     if (created) {
       setTitle("");
       setContent("");
@@ -75,11 +80,10 @@ export function PostComposer({ communityId = null, onPostCreated }: PostComposer
 
           <div className="space-y-3">
             <Input
-              label="post title"
+              label="post title (optional)"
               placeholder="e.g. Building an open source compiler in Go"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
             />
             <label className="block">
               <Textarea

@@ -56,7 +56,7 @@ export type Post = {
   id: string;
   author_id: string;
   community_id: string | null;
-  title: string;
+  title: string | null;
   content: string;
   created_at: string;
   updated_at: string;

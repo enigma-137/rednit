@@ -6,6 +6,12 @@ import { createClient } from "@/lib/supabase/client";
 import { mockPosts, mockComments, mockProfiles } from "@/lib/mock-data";
 import type { Post, Comment, Profile } from "@/lib/types";
 
+export function containsLink(text: string | null | undefined): boolean {
+  if (!text) return false;
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9-]+\.(com|net|org|io|dev|co|xyz|gov|edu|info)\b)/i;
+  return urlRegex.test(text);
+}
+
 export function useFeed() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,13 +52,18 @@ export function useFeed() {
     setLoading(false);
   }, []);
 
-  const createPost = useCallback(async (title: string, content: string, communityId: string | null = null): Promise<Post | null> => {
+  const createPost = useCallback(async (title: string | null, content: string, communityId: string | null = null): Promise<Post | null> => {
+    if (containsLink(title) || containsLink(content)) {
+      console.warn("Posting links is blocked for security.");
+      return null;
+    }
+
     if (!hasSupabaseConfig()) {
       const newPost: Post = {
         id: `post-local-${Date.now()}`,
         author_id: "me",
         community_id: communityId,
-        title,
+        title: title || null,
         content,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -87,7 +98,7 @@ export function useFeed() {
     const { data, error } = await supabase
       .from("posts")
       .insert({
-        title,
+        title: title || null,
         content,
         community_id: communityId,
         author_id: user.id
@@ -137,6 +148,11 @@ export function useFeed() {
   }, []);
 
   const createComment = useCallback(async (postId: string, content: string): Promise<Comment | null> => {
+    if (containsLink(content)) {
+      console.warn("Posting links is blocked for security.");
+      return null;
+    }
+
     if (!hasSupabaseConfig()) {
       const newComment: Comment = {
         id: `comment-local-${Date.now()}`,
