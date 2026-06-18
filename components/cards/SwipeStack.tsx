@@ -8,9 +8,10 @@ type SwipeStackProps = {
   profiles: Profile[];
   onLike: (profile: Profile) => void;
   onPass: (profile: Profile) => void;
+  onSelectSkill?: (skill: string) => void;
 };
 
-export function SwipeStack({ profiles, onLike, onPass }: SwipeStackProps) {
+export function SwipeStack({ profiles, onLike, onPass, onSelectSkill }: SwipeStackProps) {
   const visible = profiles.slice(0, 3);
   const top = visible[0];
 
@@ -27,6 +28,7 @@ export function SwipeStack({ profiles, onLike, onPass }: SwipeStackProps) {
                 active={index === 0}
                 onLike={onLike}
                 onPass={onPass}
+                onSelectSkill={onSelectSkill}
               />
             ))
             .reverse()

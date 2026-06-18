@@ -12,6 +12,7 @@ type SwipeCardProps = {
   index?: number;
   onLike: (profile: Profile) => void;
   onPass: (profile: Profile) => void;
+  onSelectSkill?: (skill: string) => void;
 };
 
 export function SwipeCard({
@@ -19,7 +20,8 @@ export function SwipeCard({
   active = true,
   index = 0,
   onLike,
-  onPass
+  onPass,
+  onSelectSkill
 }: SwipeCardProps) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-160, 0, 160], [-12, 0, 12]);
@@ -124,12 +126,17 @@ export function SwipeCard({
           {profile.skills && profile.skills.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1 shrink-0">
               {profile.skills.slice(0, 4).map((skill) => (
-                <span
+                <button
                   key={skill}
-                  className="border border-black bg-gray-100 px-2 py-0.5 font-mono text-[9px] text-black"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onSelectSkill?.(skill);
+                  }}
+                  className="border border-black bg-gray-100 px-2 py-0.5 font-mono text-[9px] text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
                 >
                   {skill}
-                </span>
+                </button>
               ))}
             </div>
           )}

@@ -20,6 +20,11 @@ export default function DiscoverPage() {
     if (matchResult) setMatchData(matchResult);
   }
 
+  function handleSelectSkill(skill: string) {
+    setSearchSkill(skill);
+    setShowFilters(true);
+  }
+
   const filteredProfiles = profiles.filter((profile) => {
     if (searchSkill) {
       const hasSkill = (profile.skills ?? []).some((s) =>
@@ -122,7 +127,12 @@ export default function DiscoverPage() {
           loading profiles.
         </section>
       ) : filteredProfiles.length > 0 ? (
-        <SwipeStack profiles={filteredProfiles} onLike={handleLike} onPass={pass} />
+        <SwipeStack 
+          profiles={filteredProfiles} 
+          onLike={handleLike} 
+          onPass={pass} 
+          onSelectSkill={handleSelectSkill}
+        />
       ) : (
         <div className="flex flex-1 flex-col items-center justify-center p-8 text-center font-mono text-sm gap-4">
           <span>no matching profiles loaded.</span>
