@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Github, Link as LinkIcon, MapPin, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { GitHubStats } from "@/components/profile/GitHubStats";
+import { ConnectionCountBadge } from "@/components/profile/ConnectionCountBadge";
 import { hasSupabaseConfig } from "@/lib/env";
 import { mockProfiles } from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/server";
@@ -23,8 +24,21 @@ async function getProfile(): Promise<Profile | null> {
   return data;
 }
 
+async function getProfileConnectionCount(profileId: string): Promise<number> {
+  if (!hasSupabaseConfig()) return 2; // Default mock matches count
+
+  const supabase = createClient();
+  const { count } = await supabase
+    .from("matches")
+    .select("*", { count: "exact", head: true })
+    .or(`user_a_id.eq.${profileId},user_b_id.eq.${profileId}`);
+
+  return count ?? 0;
+}
+
 export default async function ProfilePage() {
   const profile = await getProfile();
+  const connectionCount = profile ? await getProfileConnectionCount(profile.id) : 0;
 
   return (
     <section className="mx-auto min-h-screen max-w-2xl px-5 py-8">
@@ -62,6 +76,10 @@ export default async function ProfilePage() {
             </p>
           )}
           <p className="mt-1 font-mono text-xs text-gray-500">@{profile.username}</p>
+
+          <div className="mt-4">
+            <ConnectionCountBadge userId={hasSupabaseConfig() ? profile.id : "me"} initialCount={connectionCount} />
+          </div>
 
           {profile.bio ? (
             <p className="mt-6 border-t border-gray-200 pt-6 font-mono text-sm leading-7">
