@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { Github, Link as LinkIcon } from "lucide-react";
@@ -23,6 +24,7 @@ export function SwipeCard({
   onPass,
   onSelectSkill
 }: SwipeCardProps) {
+  const [showGitStats, setShowGitStats] = useState(false);
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-160, 0, 160], [-12, 0, 12]);
   const likeOpacity = useTransform(x, [0, 120], [0, 1]);
@@ -141,26 +143,36 @@ export function SwipeCard({
             </div>
           )}
 
-          <div className="mt-3 shrink-0">
-            <GitHubStats username={profile.username} />
-          </div>
+          <div className="mt-auto min-w-0 shrink-0 border-t border-gray-200 pt-3 font-mono text-xs space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <a
+                href={profile.github_url ?? `https://github.com/${profile.username}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-w-0 items-center gap-2 hover:underline"
+              >
+                <Github aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
+                <span className="truncate">{profile.username}</span>
+              </a>
+              
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowGitStats(true);
+                }}
+                className="border border-black bg-white hover:bg-black hover:text-white px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider transition-colors shrink-0"
+              >
+                Stats
+              </button>
+            </div>
 
-          <div className="mt-auto min-w-0 shrink-0 space-y-1.5 border-t border-gray-200 pt-3 font-mono text-xs">
-            <a
-              href={profile.github_url ?? `https://github.com/${profile.username}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex min-w-0 items-center gap-2"
-            >
-              <Github aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
-              <span className="truncate">{profile.username}</span>
-            </a>
             {profile.portfolio_url ? (
               <a
                 href={profile.portfolio_url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-w-0 items-center gap-2"
+                className="flex min-w-0 items-center gap-2 hover:underline"
               >
                 <LinkIcon aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
                 <span className="truncate">
@@ -171,6 +183,25 @@ export function SwipeCard({
           </div>
         </div>
       </div>
+
+      {/* GitHub Stats Popup Overlay */}
+      {showGitStats && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/95 p-4 select-none">
+          <div className="w-full max-w-[320px] border border-black bg-white p-4 font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <GitHubStats username={profile.username} />
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowGitStats(false);
+              }}
+              className="mt-4 w-full border border-black bg-black text-white hover:bg-white hover:text-black py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors"
+            >
+              Close Metrics
+            </button>
+          </div>
+        </div>
+      )}
     </motion.article>
   );
 }
