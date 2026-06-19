@@ -35,7 +35,7 @@ export function PostComposer({ communityId = null, onPostCreated }: PostComposer
     }
 
     setSubmitting(true);
-    const created = await createPost(title.trim() || null, content.trim(), communityId);
+    const created = await createPost(title.trim() || "_untitled_post_", content.trim(), communityId);
     if (created) {
       setTitle("");
       setContent("");

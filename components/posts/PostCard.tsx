@@ -110,7 +110,7 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Post body */}
       <main className="mt-4">
-        {post.title && (
+        {post.title && post.title !== "_untitled_post_" && (
           <h3 className="text-base font-bold tracking-tight mb-2">{post.title}</h3>
         )}
         <p className="font-mono text-xs text-gray-800 leading-5 whitespace-pre-wrap">

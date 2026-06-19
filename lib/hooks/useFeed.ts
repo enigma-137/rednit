@@ -52,7 +52,7 @@ export function useFeed() {
     setLoading(false);
   }, []);
 
-  const createPost = useCallback(async (title: string | null, content: string, communityId: string | null = null): Promise<Post | null> => {
+  const createPost = useCallback(async (title: string, content: string, communityId: string | null = null): Promise<Post | null> => {
     if (containsLink(title) || containsLink(content)) {
       console.warn("Posting links is blocked for security.");
       return null;
@@ -63,7 +63,7 @@ export function useFeed() {
         id: `post-local-${Date.now()}`,
         author_id: "me",
         community_id: communityId,
-        title: title || null,
+        title,
         content,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -98,7 +98,7 @@ export function useFeed() {
     const { data, error } = await supabase
       .from("posts")
       .insert({
-        title: title || null,
+        title,
         content,
         community_id: communityId,
         author_id: user.id
