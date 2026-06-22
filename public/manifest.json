@@ -45,10 +45,14 @@
   ],
   "shortcuts": [
     {
-      "name": "Find Meetups",
-      "short_name": "Meetups",
-      "url": "/meetups",
-      "description": "Discover upcoming developer meetups"
+      "name": "Discover",
+      "url": "/discover",
+      "description": "Find and connect with developers"
+    },
+    {
+      "name": "Matches",
+      "url": "/matches",
+      "description": "View your matches and likes"
     }
   ],
   "prefer_related_applications": false
