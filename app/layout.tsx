@@ -16,9 +16,15 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap"
 });
 
-export const metadata: Metadata = {
-  title: "rednit",
-  description: "A developer-only dating app."
+export const metadata : Metadata = {
+  title: "Rednit",
+  description: "A minimalist developer meeting app",
+  manifest: "/manifest.json",
+  themeColor: "#ffffff",
+  icons: {
+    icon: "/android/launchericon-192x192.png",
+    apple: "/android/launchericon-192x192.png"
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
