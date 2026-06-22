@@ -1,7 +1,7 @@
 {
   "name": "Rednit",
   "short_name": "Rednit",
-  "start_url": "/",
+  "start_url": "/discover",
   "display": "standalone",
   "description": "A minimalist developer meeting app to find collaborators, discover job opportunities, hire talent, and build things together.",
   "lang": "en",
