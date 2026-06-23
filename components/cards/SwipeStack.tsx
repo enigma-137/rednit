@@ -17,7 +17,7 @@ export function SwipeStack({ profiles, onLike, onPass, onSelectSkill }: SwipeSta
 
   return (
     <section className="flex w-full flex-col items-center justify-start gap-5 px-3 pb-8 pt-2 sm:justify-center sm:gap-8 sm:px-5 sm:py-8">
-      <div className="relative h-[min(60vh,600px)] min-h-[460px] w-full max-w-[420px] border border-black bg-white">
+      <div className="relative h-[min(60vh,600px)] min-h-[460px] w-full max-w-[420px] bg-white">
         {visible.length ? (
           visible
             .map((profile, index) => (
