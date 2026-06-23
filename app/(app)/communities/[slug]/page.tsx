@@ -189,7 +189,7 @@ export default function CommunityDashboardPage() {
         </Link>
       </header>
 
-      {/* Hero Header Card */}
+
       <article className="border border-black bg-white p-6 sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-3">
@@ -230,24 +230,20 @@ export default function CommunityDashboardPage() {
         </p>
       </article>
 
-      {/* Main Grid: Discussions Feed & Members Roster */}
       <div className="grid gap-8 mt-8 lg:grid-cols-[1fr_280px]">
-        {/* Left Column: Feed / Meetups Tabbed Views */}
         <section className="space-y-6">
           <div className="flex gap-6 border-b border-black pb-2">
             <button
               onClick={() => setActiveTab("feed")}
-              className={`font-sans text-sm font-bold uppercase tracking-[0.15em] pb-1 border-b-2 transition-all ${
-                activeTab === "feed" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-black"
-              }`}
+              className={`font-sans text-sm font-bold uppercase tracking-[0.15em] pb-1 border-b-2 transition-all ${activeTab === "feed" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-black"
+                }`}
             >
               Discussions Feed
             </button>
             <button
               onClick={() => setActiveTab("meetups")}
-              className={`font-sans text-sm font-bold uppercase tracking-[0.15em] pb-1 border-b-2 transition-all ${
-                activeTab === "meetups" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-black"
-              }`}
+              className={`font-sans text-sm font-bold uppercase tracking-[0.15em] pb-1 border-b-2 transition-all ${activeTab === "meetups" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-black"
+                }`}
             >
               Upcoming Meetups
             </button>
@@ -307,8 +303,6 @@ export default function CommunityDashboardPage() {
             </div>
           )}
         </section>
-
-        {/* Right Column: Members roster */}
         <aside className="space-y-6">
           <h2 className="text-xl font-bold tracking-tight border-b border-black pb-2">
             members
