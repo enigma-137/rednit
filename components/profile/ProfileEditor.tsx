@@ -185,6 +185,7 @@ export function ProfileEditor() {
       <div className="grid gap-8 py-8">
         <AvatarUpload
           initialUrl={profile.avatar_url}
+          onUploadComplete={(url) => update("avatar_url", url)}
         />
         <Input
           label="full name"
