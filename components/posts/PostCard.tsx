@@ -71,7 +71,6 @@ export function PostCard({ post }: PostCardProps) {
 
   return (
     <article className="border border-black bg-white p-5 shadow-sm transition-all duration-150 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-      {/* Header: User Profile */}
       <header className="flex items-start gap-3">
         <div className="relative h-9 w-9 border border-black bg-gray-100 overflow-hidden shrink-0">
           {post.author?.avatar_url ? (
@@ -108,7 +107,7 @@ export function PostCard({ post }: PostCardProps) {
         </time>
       </header>
 
-      {/* Post body */}
+
       <main className="mt-4">
         {post.title && post.title !== "_untitled_post_" && (
           <h3 className="text-base font-bold tracking-tight mb-2">{post.title}</h3>
@@ -118,13 +117,12 @@ export function PostCard({ post }: PostCardProps) {
         </p>
       </main>
 
-      {/* Footer / Toggle comments */}
+
       <footer className="mt-5 border-t border-gray-100 pt-3">
         <button
           onClick={() => setShowComments(!showComments)}
-          className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider transition-colors ${
-            showComments ? "text-black font-bold" : "text-gray-500 hover:text-black"
-          }`}
+          className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider transition-colors ${showComments ? "text-black font-bold" : "text-gray-500 hover:text-black"
+            }`}
         >
           <MessageSquare className="h-3.5 w-3.5" />
           <span>Discussion / Comments</span>
@@ -132,7 +130,6 @@ export function PostCard({ post }: PostCardProps) {
 
         {showComments && (
           <div className="mt-4 border-t border-gray-100 pt-4 space-y-4">
-            {/* List of comments */}
             {loadingComments ? (
               <div className="font-mono text-[10px] text-gray-400">Loading discussion...</div>
             ) : comments.length === 0 ? (
@@ -164,7 +161,6 @@ export function PostCard({ post }: PostCardProps) {
               </div>
             )}
 
-            {/* Comment Composer form */}
             <form onSubmit={handleAddComment} className="flex gap-2 pt-2 items-center">
               <input
                 type="text"
