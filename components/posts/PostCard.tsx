@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { MessageSquare, Send, CornerDownRight, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { MessageSquare, Send, CornerDownRight } from "lucide-react";
 import { useFeed, containsLink } from "@/lib/hooks/useFeed";
 import { ConnectButton } from "@/components/ui/ConnectButton";
 import type { Post, Comment } from "@/lib/types";
