@@ -154,7 +154,7 @@ export function SwipeCard({
                 <Github aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
                 <span className="truncate">{profile.username}</span>
               </a>
-              
+
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -183,8 +183,6 @@ export function SwipeCard({
           </div>
         </div>
       </div>
-
-      {/* GitHub Stats Popup Overlay */}
       {showGitStats && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/95 p-4 select-none">
           <div className="w-full max-w-[320px] border border-black bg-white p-4 font-mono shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
